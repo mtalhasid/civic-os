@@ -9,7 +9,7 @@ import {
   Leaf, TreePine, Eye, Star
 } from "lucide-react";
 
-// ── Google Font ──────────────────────────────────────────────
+
 const FontLoader = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400&display=swap');
@@ -27,7 +27,6 @@ const FontLoader = () => (
       --white: #ffffff;
     }
 
-    /* Leaf pattern background */
     .leaf-bg {
       background-color: #ffffff;
       background-image:
@@ -41,7 +40,6 @@ const FontLoader = () => (
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cellipse cx='40' cy='40' rx='6' ry='18' fill='none' stroke='%2316a34a' stroke-width='0.8' opacity='0.12' transform='rotate(30 40 40)'/%3E%3Cellipse cx='15' cy='15' rx='4' ry='12' fill='none' stroke='%2316a34a' stroke-width='0.6' opacity='0.08' transform='rotate(-20 15 15)'/%3E%3Cellipse cx='65' cy='65' rx='4' ry='12' fill='none' stroke='%2316a34a' stroke-width='0.6' opacity='0.08' transform='rotate(60 65 65)'/%3E%3C/svg%3E");
     }
 
-    /* Carousel */
     .carousel-track {
       display: flex;
       gap: 20px;
@@ -54,7 +52,6 @@ const FontLoader = () => (
       -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
     }
 
-    /* Stat counter animation */
     @keyframes countUp { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
     .btn-primary {
@@ -100,7 +97,6 @@ const FontLoader = () => (
       transform: translateY(-1px);
     }
 
-    /* Floating leaves */
     @keyframes floatLeaf1 {
       0%,100% { transform: translateY(0px) rotate(0deg); }
       50% { transform: translateY(-18px) rotate(8deg); }
@@ -134,10 +130,41 @@ const FontLoader = () => (
       0% { background-position: -200% 0; }
       100% { background-position: 200% 0; }
     }
+
+    .landing-root { overflow-x: hidden; max-width: 100vw; }
+    .landing-nav { padding: 0 48px; }
+    .landing-nav-links { display: flex; gap: 32px; align-items: center; }
+    .landing-nav-cta-label { display: inline; }
+    .landing-hero-inner { max-width: 900px; margin: 0 auto; padding: 90px 24px 60px; text-align: center; position: relative; z-index: 1; }
+    .landing-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #e5e7eb; border: 1.5px solid #e5e7eb; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .landing-footer { padding: 18px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .landing-footer-links { display: flex; gap: 20px; }
+    .landing-decor-leaf { display: block; }
+    .landing-nav-mobile-actions { display: none; align-items: center; gap: 8px; }
+    .landing-nav-desktop-cta { display: inline-flex; }
+
+    @media (max-width: 1023px) {
+      .landing-nav { padding: 0 16px !important; height: 56px !important; }
+      .landing-nav-links { display: none !important; }
+      .landing-nav-cta-label { display: none !important; }
+      .landing-nav-mobile-actions { display: flex !important; }
+      .landing-nav-desktop-cta { display: none !important; }
+      .landing-hero-inner { padding: 72px 16px 48px !important; }
+      .landing-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .landing-footer { padding: 16px !important; flex-direction: column; text-align: center; justify-content: center; }
+      .landing-footer-links { justify-content: center; flex-wrap: wrap; }
+      .landing-decor-leaf { display: none !important; }
+      .landing-carousel-section { padding: 36px 0 !important; }
+      .landing-carousel-section h2 { font-size: 20px !important; padding: 0 16px; }
+    }
+
+    @media (max-width: 380px) {
+      .landing-stats-grid { grid-template-columns: 1fr !important; }
+    }
   `}</style>
 );
 
-// ── Leaf SVG ─────────────────────────────────────────────────
+
 const LeafSVG = ({ size = 40, opacity = 0.18, rotate = 0, color = "#16a34a" }) => (
   <svg width={size} height={size} viewBox="0 0 40 40" fill="none" style={{ transform: `rotate(${rotate}deg)`, opacity }}>
     <path d="M20 38C20 38 4 28 4 14C4 7.4 11.2 2 20 2C28.8 2 36 7.4 36 14C36 28 20 38 20 38Z" fill={color} />
@@ -147,7 +174,7 @@ const LeafSVG = ({ size = 40, opacity = 0.18, rotate = 0, color = "#16a34a" }) =
   </svg>
 );
 
-// ── Animated Counter ──────────────────────────────────────────
+
 const Counter = ({ to, prefix = "", suffix = "" }: { to: number; prefix?: string; suffix?: string }) => {
   const ref = useRef<any>(null);
   const inView = useInView(ref, { once: true });
@@ -165,7 +192,7 @@ const Counter = ({ to, prefix = "", suffix = "" }: { to: number; prefix?: string
   return <span ref={ref}>{prefix}0{suffix}</span>;
 };
 
-// ── Carousel Data ─────────────────────────────────────────────
+
 const carouselItems = [
   { icon: AlertTriangle, label: "Pothole Reported", loc: "Banjara Hills, Hyd", status: "Under Review", color: "#f59e0b", bg: "#fffbeb" },
   { icon: CheckCircle, label: "Garbage Cleared", loc: "Kukatpally, Hyd", status: "Resolved ✓", color: "#16a34a", bg: "#f0fdf4" },
@@ -222,7 +249,7 @@ const CarouselCard = ({ item }: { item: typeof carouselItems[0] }) => {
   );
 };
 
-// ── Infinite Carousel ─────────────────────────────────────────
+
 const InfiniteCarousel = () => {
   const trackRef = useRef<any>(null);
   const items = [...carouselItems, ...carouselItems, ...carouselItems];
@@ -254,18 +281,18 @@ const InfiniteCarousel = () => {
   );
 };
 
-// ── Nav ───────────────────────────────────────────────────────
+
 const Nav = () => (
   <motion.nav
     initial={{ y: -30, opacity: 0 }}
     animate={{ y: 0, opacity: 1 }}
     transition={{ duration: 0.6, ease: "easeOut" }}
+    className="landing-nav"
     style={{
       position: "relative", zIndex: 100,
       background: "rgba(255,255,255,0.95)",
       backdropFilter: "blur(12px)",
       borderBottom: "1.5px solid #e5e7eb",
-      padding: "0 48px",
       display: "flex", alignItems: "center", justifyContent: "space-between",
       height: 64,
     }}>
@@ -280,17 +307,26 @@ const Nav = () => (
         CIVICOS
       </span>
     </div>
-    <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+    <div className="landing-nav-links">
       <Link href="/login" style={{ fontFamily: "Arvo, serif", fontSize: 14, color: "#374151", textDecoration: "none", transition: "color 0.2s" }}>Sign In</Link>
       <Link href="/signup" style={{ fontFamily: "Arvo, serif", fontSize: 14, color: "#374151", textDecoration: "none", transition: "color 0.2s" }}>Join Platform</Link>
     </div>
-    <Link href="/signup" className="btn-primary" style={{ padding: "9px 20px", fontSize: 13 }}>
-      Join Now <ChevronRight size={14} />
+    <div className="landing-nav-mobile-actions">
+      <Link href="/login" style={{ padding: "8px 10px", borderRadius: 8, border: "1.5px solid #e5e7eb", display: "flex", alignItems: "center", textDecoration: "none" }} title="Sign In">
+        <Users size={16} color="#374151" />
+      </Link>
+      <Link href="/signup" className="btn-primary" style={{ padding: "9px 12px", fontSize: 13 }} title="Join Now">
+        <ChevronRight size={16} />
+      </Link>
+    </div>
+    <Link href="/signup" className="btn-primary landing-nav-desktop-cta" style={{ padding: "9px 20px", fontSize: 13 }}>
+      <span className="landing-nav-cta-label">Join Now</span>
+      <ChevronRight size={14} />
     </Link>
   </motion.nav>
 );
 
-// ── Stats ─────────────────────────────────────────────────────
+
 const stats = [
   { label: "Issues Reported", value: 48200, suffix: "+", icon: AlertTriangle },
   { label: "Issues Resolved", value: 31500, suffix: "+", icon: CheckCircle },
@@ -298,7 +334,6 @@ const stats = [
   { label: "MLAs Tracked", value: 119, suffix: "", icon: BarChart2 },
 ];
 
-// ── MAIN ──────────────────────────────────────────────────────
 export default function Home() {
   const badgeVariants = {
     hidden: { opacity: 0, scale: 0.8, y: 10 },
@@ -308,33 +343,30 @@ export default function Home() {
   return (
     <>
       <FontLoader />
-      <div style={{ fontFamily: "Arvo, serif", background: "#fff", minHeight: "100vh" }}>
+      <div style={{ fontFamily: "Arvo, serif", background: "#fff", minHeight: "100vh" }} className="landing-root">
         <Nav />
 
-        {/* ── HERO ── */}
         <section className="leaf-bg hero-pattern" style={{ position: "relative", overflow: "hidden", paddingBottom: 80 }}>
 
-          {/* Decorative floating leaves */}
-          <div className="leaf-float-1" style={{ position: "absolute", top: 80, left: 60, zIndex: 0 }}>
+          <div className="leaf-float-1 landing-decor-leaf" style={{ position: "absolute", top: 80, left: 60, zIndex: 0 }}>
             <LeafSVG size={52} opacity={0.14} rotate={-25} />
           </div>
-          <div className="leaf-float-2" style={{ position: "absolute", top: 180, right: 80, zIndex: 0 }}>
+          <div className="leaf-float-2 landing-decor-leaf" style={{ position: "absolute", top: 180, right: 80, zIndex: 0 }}>
             <LeafSVG size={38} opacity={0.12} rotate={40} />
           </div>
-          <div className="leaf-float-3" style={{ position: "absolute", top: 40, right: 260, zIndex: 0 }}>
+          <div className="leaf-float-3 landing-decor-leaf" style={{ position: "absolute", top: 40, right: 260, zIndex: 0 }}>
             <LeafSVG size={28} opacity={0.1} rotate={-10} />
           </div>
-          <div className="leaf-float-1" style={{ position: "absolute", bottom: 120, left: 180, zIndex: 0 }}>
+          <div className="leaf-float-1 landing-decor-leaf" style={{ position: "absolute", bottom: 120, left: 180, zIndex: 0 }}>
             <LeafSVG size={44} opacity={0.11} rotate={60} />
           </div>
-          <div className="leaf-float-2" style={{ position: "absolute", bottom: 60, right: 140, zIndex: 0 }}>
+          <div className="leaf-float-2 landing-decor-leaf" style={{ position: "absolute", bottom: 60, right: 140, zIndex: 0 }}>
             <LeafSVG size={32} opacity={0.1} rotate={-40} />
           </div>
-          <div className="leaf-float-3" style={{ position: "absolute", top: 280, left: 320, zIndex: 0 }}>
+          <div className="leaf-float-3 landing-decor-leaf" style={{ position: "absolute", top: 280, left: 320, zIndex: 0 }}>
             <LeafSVG size={22} opacity={0.08} rotate={20} />
           </div>
 
-          {/* Large decorative background circles */}
           <div style={{
             position: "absolute", width: 600, height: 600,
             borderRadius: "50%",
@@ -348,14 +380,8 @@ export default function Home() {
             bottom: -100, left: -80, zIndex: 0, pointerEvents: "none"
           }} />
 
-          {/* Hero Content */}
-          <div style={{
-            maxWidth: 900, margin: "0 auto",
-            padding: "90px 24px 60px",
-            textAlign: "center", position: "relative", zIndex: 1
-          }}>
+          <div className="landing-hero-inner">
 
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -374,7 +400,6 @@ export default function Home() {
               </span>
             </motion.div>
 
-            {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -388,7 +413,6 @@ export default function Home() {
               Your City.{" "}
               <span style={{ color: "#16a34a", position: "relative" }}>
                 Your Voice.
-                {/* Underline accent */}
                 <motion.svg
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
@@ -401,7 +425,6 @@ export default function Home() {
               <br />Your Accountability.
             </motion.h1>
 
-            {/* Subheadline */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -415,7 +438,6 @@ export default function Home() {
               MLAs publicly accountable — all on a live civic intelligence map of Hyderabad.
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -429,7 +451,6 @@ export default function Home() {
               </Link>
             </motion.div>
 
-            {/* Feature pills */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -460,17 +481,12 @@ export default function Home() {
               ))}
             </motion.div>
 
-            {/* Stats Row */}
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.7 }}
-              style={{
-                display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-                gap: 1, background: "#e5e7eb",
-                border: "1.5px solid #e5e7eb", borderRadius: 16,
-                overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-              }}>
+              className="landing-stats-grid"
+            >
               {stats.map(({ label, value, suffix, icon: Icon }) => (
                 <div key={label} style={{
                   background: "#fff", padding: "28px 20px",
@@ -494,15 +510,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── CAROUSEL SECTION ── */}
-        <section style={{
+        <section className="landing-carousel-section" style={{
           background: "#f9fafb",
           borderTop: "1.5px solid #e5e7eb",
           borderBottom: "1.5px solid #e5e7eb",
           padding: "52px 0",
           position: "relative", overflow: "hidden"
         }}>
-          {/* Decorative leaf strip top */}
           <div style={{
             position: "absolute", top: 0, left: 0, right: 0,
             height: 3, background: "repeating-linear-gradient(90deg, #16a34a 0px, #16a34a 20px, transparent 20px, transparent 40px)"
@@ -528,13 +542,11 @@ export default function Home() {
 
           <InfiniteCarousel />
 
-          {/* Second row (reverse direction) */}
           <div style={{ marginTop: 18 }}>
             <InfiniteCarouselReverse />
           </div>
         </section>
 
-        {/* ── CTA STRIP ── */}
         <motion.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -546,7 +558,6 @@ export default function Home() {
             textAlign: "center",
             position: "relative", overflow: "hidden"
           }}>
-          {/* Leaf decorations on CTA */}
           <div style={{ position: "absolute", left: 40, top: 20, opacity: 0.12 }}>
             <LeafSVG size={80} opacity={1} rotate={-30} color="white" />
           </div>
@@ -579,8 +590,7 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* Footer bar */}
-        <div style={{ background: "#f9fafb", borderTop: "1.5px solid #e5e7eb", padding: "18px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="landing-footer" style={{ background: "#f9fafb", borderTop: "1.5px solid #e5e7eb" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ width: 22, height: 22, background: "#16a34a", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <TreePine size={12} color="white" />
@@ -588,7 +598,7 @@ export default function Home() {
             <span style={{ fontFamily: "Arvo, serif", fontWeight: 700, fontSize: 13, color: "#111827" }}>CIVICOS</span>
           </div>
           <span style={{ fontFamily: "Arvo, serif", fontSize: 12, color: "#9ca3af" }}>© 2025 Civicos · Built for Hyderabad</span>
-          <div style={{ display: "flex", gap: 20 }}>
+          <div className="landing-footer-links">
             {["Privacy", "Terms", "Contact"].map(t => (
               <span key={t} style={{ fontFamily: "Arvo, serif", fontSize: 12, color: "#6b7280", cursor: "pointer" }}>{t}</span>
             ))}
@@ -599,7 +609,7 @@ export default function Home() {
   );
 }
 
-// ── Reverse Carousel ──────────────────────────────────────────
+
 const reverseItems = [...carouselItems].reverse();
 
 function InfiniteCarouselReverse() {

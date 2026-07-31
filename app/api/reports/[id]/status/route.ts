@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireServerSession } from "@/lib/authServer";
 
-// Valid status transitions
+
 const VALID_TRANSITIONS: Record<string, string[]> = {
   REPORTED: ["ASSIGNED", "REJECTED"],
   ASSIGNED: ["IN_PROGRESS", "RESOLVED_PENDING_VERIFICATION", "REJECTED"],
   IN_PROGRESS: ["RESOLVED_PENDING_VERIFICATION", "REJECTED"],
-  RESOLVED_PENDING_VERIFICATION: [], // Only citizen can move from here
+  RESOLVED_PENDING_VERIFICATION: [], 
   CONFIRMED_FIXED: [],
   REOPENED: ["IN_PROGRESS", "REJECTED"],
   REJECTED: [],
@@ -25,14 +25,14 @@ export async function PATCH(
 
   const user = session.user as any;
 
-  // Check if the user ID actually exists in the database to avoid foreign key errors
+  
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
     select: { id: true },
   });
   const validActorId = dbUser ? user.id : null;
 
-  // Only authorities can change status
+  
   if (user.role !== "AUTHORITY") {
     return NextResponse.json(
       { error: "Only authorities can update issue status" },
@@ -48,13 +48,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Status is required" }, { status: 400 });
   }
 
-  // Get current issue
+  
   const issue = await prisma.report.findUnique({ where: { id } });
   if (!issue) {
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
   }
 
-  // Validate transition
+  
   const allowed = VALID_TRANSITIONS[issue.status] ?? [];
   if (!allowed.includes(newStatus)) {
     return NextResponse.json(
@@ -63,7 +63,7 @@ export async function PATCH(
     );
   }
 
-  // Validate fix photo when resolving
+  
   if (newStatus === "RESOLVED_PENDING_VERIFICATION" && !fixPhotoUrl) {
     return NextResponse.json(
       { error: "Fix photo is required when marking as resolved" },
@@ -71,7 +71,7 @@ export async function PATCH(
     );
   }
 
-  // Validate rejection reason
+  
   if (newStatus === "REJECTED" && (!rejectionReason || !rejectionReason.trim())) {
     return NextResponse.json(
       { error: "Rejection reason is required" },
@@ -79,7 +79,7 @@ export async function PATCH(
     );
   }
 
-  // Build update data
+  
   const updateData: any = { status: newStatus, updatedAt: new Date() };
 
   if (newStatus === "RESOLVED_PENDING_VERIFICATION") {
@@ -90,12 +90,12 @@ export async function PATCH(
     updateData.rejectionReason = rejectionReason.trim();
   }
 
-  // If assigning, set the authority
+  
   if (newStatus === "ASSIGNED" || issue.status === "REPORTED") {
     updateData.assignedAuthorityId = validActorId;
   }
 
-  // Update issue and create timeline entry in a transaction
+  
   const [updatedIssue] = await prisma.$transaction([
     prisma.report.update({
       where: { id },

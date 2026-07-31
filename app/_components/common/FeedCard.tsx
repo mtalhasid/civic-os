@@ -68,10 +68,9 @@ export default function FeedCard({
   return (
     <Link
       href={`/reports/${id}`}
-      className="flex flex-col rounded-3xl border overflow-hidden transition-all hover:border-green-400 hover:shadow-2xl hover:shadow-green-900/10 group no-underline"
+      className="flex flex-col rounded-2xl lg:rounded-3xl border overflow-hidden transition-all hover:border-green-400 hover:shadow-2xl hover:shadow-green-900/10 group no-underline"
       style={{ background: "white", borderColor: "var(--border)" }}
     >
-      {/* Image Top Half */}
       <div
         className="h-56 w-full shrink-0 overflow-hidden bg-gray-50 relative"
       >
@@ -83,7 +82,6 @@ export default function FeedCard({
           </div>
         )}
         
-        {/* Status Badge Over Image */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
           <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest shadow-lg ${sc}`}>
             {STATUS_LABEL[status] ?? status.replace(/_/g, " ")}
@@ -98,8 +96,7 @@ export default function FeedCard({
         </div>
       </div>
 
-      {/* Content Bottom Half */}
-      <div className="p-6 flex flex-col flex-1">
+      <div className="p-4 lg:p-6 flex flex-col flex-1">
         <div className="mb-3">
           <h2 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-green-600 transition-colors">
             {title}

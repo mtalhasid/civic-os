@@ -31,7 +31,7 @@ import {
   Line,
 } from "recharts";
 
-// Dynamic import for Leaflet map (no SSR)
+
 const SmartRouteMap = dynamic(() => import("./SmartRouteMap"), { ssr: false });
 
 interface Report {
@@ -85,7 +85,6 @@ export default function SmartRouteClient() {
   const [allReports, setAllReports] = useState<Report[]>([]);
   const [expandedHazard, setExpandedHazard] = useState<string | null>(null);
 
-  // Fetch all reports on mount to show default pins
   useEffect(() => {
     async function fetchReports() {
       try {
@@ -112,7 +111,7 @@ export default function SmartRouteClient() {
     setExpandedHazard(null);
 
     try {
-      // Step 1: Geocode + OSRM route
+      
       setActiveStep("routing");
       const routeRes = await fetch("/api/smart-route/route", {
         method: "POST",
@@ -123,7 +122,7 @@ export default function SmartRouteClient() {
       if (!routeRes.ok) throw new Error(routeData.error);
       const { routePoints, totalDistance, totalDuration, sourceCoords, destCoords } = routeData;
 
-      // Step 2: Analyze complaints
+      
       setActiveStep("analyzing");
       const analyzeRes = await fetch("/api/smart-route/analyze", {
         method: "POST",
@@ -134,7 +133,7 @@ export default function SmartRouteClient() {
       if (!analyzeRes.ok) throw new Error(analyzeData.error);
       const { flaggedComplaints } = analyzeData;
 
-      // Step 3: Generate summary
+      
       setActiveStep("summarizing");
       const summaryRes = await fetch("/api/smart-route/summarize", {
         method: "POST",
@@ -157,7 +156,7 @@ export default function SmartRouteClient() {
   const durationMin = result ? Math.round(result.totalDuration / 60) : null;
   const isAllClear = result && result.flaggedComplaints.length === 0;
 
-  // Risk Chart Data
+  
   const riskChartData = result ? [
     { name: result.source, risk: 10 },
     ...result.flaggedComplaints.map(c => ({
@@ -167,15 +166,14 @@ export default function SmartRouteClient() {
     { name: result.destination, risk: 15 },
   ] : [];
 
-  // Peak risk area name
+  
   const peakArea = riskChartData.length > 2
     ? riskChartData.reduce((max, d) => d.risk > max.risk ? d : max, riskChartData[0])
     : null;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
-      {/* ── Input Card ── */}
-      <div className="bg-white/80 backdrop-blur-md border border-gray-100 rounded-[2.5rem] p-8 shadow-xl relative z-20">
+    <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 pb-8 lg:pb-12 max-w-full overflow-x-hidden">
+      <div className="bg-white/80 backdrop-blur-md border border-gray-100 rounded-[1.5rem] lg:rounded-[2.5rem] p-4 lg:p-8 shadow-xl relative z-20">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-green-200">
             <Route size={24} />
@@ -217,14 +215,13 @@ export default function SmartRouteClient() {
           <button
             type="submit"
             disabled={loading || !sourceInput.trim() || !destInput.trim()}
-            className="flex items-center justify-center gap-2 px-10 py-4 bg-gray-900 text-white font-bold text-sm rounded-2xl shadow-xl hover:bg-black active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto self-end group"
+            className="flex items-center justify-center gap-2 px-6 lg:px-10 py-3.5 lg:py-4 bg-gray-900 text-white font-bold text-sm rounded-2xl shadow-xl hover:bg-black active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto md:self-end group"
           >
             {loading ? <Loader2 size={18} className="animate-spin" /> : <TrendingUp size={18} className="group-hover:translate-x-1 transition-transform" />}
             {loading ? "Analyzing City Data…" : "Start Safety Analysis"}
           </button>
         </form>
 
-        {/* Example queries */}
         <div className="mt-6 flex flex-wrap gap-2 items-center">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">Quick Routes:</span>
           {[
@@ -244,7 +241,6 @@ export default function SmartRouteClient() {
         </div>
       </div>
 
-      {/* ── Loading Progress ── */}
       {loading && activeStep && (
         <div className="bg-white border border-gray-100 rounded-[2.5rem] p-8 shadow-xl relative z-10">
           <div className="flex items-center gap-4 mb-6">
@@ -283,7 +279,6 @@ export default function SmartRouteClient() {
         </div>
       )}
 
-      {/* ── Error ── */}
       {error && (
         <div className="bg-red-50 border border-red-100 rounded-[2rem] p-6 flex items-start gap-4 relative z-10">
           <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -296,25 +291,20 @@ export default function SmartRouteClient() {
         </div>
       )}
 
-      {/* ── Results Dashboard (New Design) ── */}
       {result && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* ── LEFT COLUMN (col-span-2) ── */}
             <div className="lg:col-span-2 space-y-5">
 
-              {/* FROM / TO Card */}
               <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm">
                 <div className="flex items-start justify-between">
                   <div className="flex gap-4">
-                    {/* Dot connector */}
                     <div className="flex flex-col items-center gap-0 pt-1">
                       <div className="w-2.5 h-2.5 rounded-full bg-green-500 ring-4 ring-green-100" />
                       <div className="w-px flex-1 min-h-[28px] bg-gray-200 my-1" />
                       <div className="w-2.5 h-2.5 rounded-full bg-amber-500 ring-4 ring-amber-100" />
                     </div>
-                    {/* Labels */}
                     <div className="space-y-3">
                       <div>
                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">From</p>
@@ -327,7 +317,6 @@ export default function SmartRouteClient() {
                     </div>
                   </div>
 
-                  {/* Hazard badge */}
                   {!isAllClear ? (
                     <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl">
                       <AlertTriangle size={14} className="text-amber-500" />
@@ -344,8 +333,7 @@ export default function SmartRouteClient() {
                 </div>
               </div>
 
-              {/* Stats Row */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
                 <div className="bg-green-50 border border-green-100 rounded-[1.5rem] p-5">
                   <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                     <Ruler size={11} />
@@ -374,7 +362,6 @@ export default function SmartRouteClient() {
                 </div>
               </div>
 
-              {/* Risk Along Route Chart */}
               <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
@@ -431,7 +418,6 @@ export default function SmartRouteClient() {
                 </div>
               </div>
 
-              {/* Key Hazards Section */}
               {!isAllClear && (
                 <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm">
                   <div className="flex items-center justify-between mb-5">
@@ -452,7 +438,6 @@ export default function SmartRouteClient() {
                           key={c.id}
                           className="border border-amber-100 bg-amber-50/40 rounded-2xl overflow-hidden transition-all"
                         >
-                          {/* Hazard header row */}
                           <button
                             onClick={() => setExpandedHazard(isExpanded ? null : c.id)}
                             className="w-full text-left p-4"
@@ -487,7 +472,6 @@ export default function SmartRouteClient() {
                             </div>
                           </button>
 
-                          {/* Expanded description */}
                           {isExpanded && (
                             <div className="px-4 pb-4">
                               <div className="bg-white/70 rounded-xl p-3 border border-amber-100">
@@ -517,7 +501,6 @@ export default function SmartRouteClient() {
                 </div>
               )}
 
-              {/* All clear summary when no hazards */}
               {isAllClear && (
                 <div className="bg-green-50 border border-green-100 rounded-[2rem] p-6">
                   <div className="flex items-start gap-4">
@@ -533,10 +516,8 @@ export default function SmartRouteClient() {
               )}
             </div>
 
-            {/* ── RIGHT COLUMN ── */}
             <div className="space-y-5">
 
-              {/* Journey Insight Card */}
               <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm">
                 <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2 mb-6">
                   <TrendingUp size={13} className="text-green-600" />
@@ -564,7 +545,6 @@ export default function SmartRouteClient() {
                 </div>
               </div>
 
-              {/* Dark Safety Tip Card */}
               <div className="bg-gray-900 rounded-[2rem] p-6 text-white relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-28 h-28 bg-green-500/10 rounded-full -mr-14 -mt-14 blur-2xl group-hover:bg-green-500/20 transition-all duration-700" />
                 <div className="relative z-10">
@@ -586,7 +566,6 @@ export default function SmartRouteClient() {
         </div>
       )}
 
-      {/* Empty state (Ready to analyze) */}
       {!loading && !error && !result && (
         <div className="bg-white border border-gray-100 rounded-[2.5rem] py-12 text-center shadow-sm relative z-10">
           <div className="w-16 h-16 bg-green-50 text-green-600 rounded-[1.5rem] flex items-center justify-center mx-auto mb-4">
@@ -599,7 +578,6 @@ export default function SmartRouteClient() {
         </div>
       )}
 
-      {/* ── Map Section (Visible by Default, now at the bottom) ── */}
       <div className="relative w-full h-[600px] bg-gray-100 border-y border-gray-200 shadow-inner rounded-[2.5rem] overflow-hidden">
         <SmartRouteMap
           routePoints={result?.routePoints || []}

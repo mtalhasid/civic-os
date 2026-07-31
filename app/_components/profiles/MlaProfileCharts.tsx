@@ -106,8 +106,12 @@ export default function MlaProfileCharts({ byCategory, statusBreakdown }: Props)
                     <Cell key={entry.name} fill={entry.fill} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(v: number | undefined) => [v ?? 0, ""]} />
-                <Legend />
+                <Tooltip
+                  formatter={(v) => [
+                    typeof v === "number" ? v : Number(v) || 0,
+                    "",
+                  ]}
+                />                <Legend />
               </PieChart>
             </PieResponsive>
           ) : (

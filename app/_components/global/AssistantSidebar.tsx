@@ -63,7 +63,6 @@ export function AssistantSidebar({ isOpen, onClose }: { isOpen: boolean; onClose
 
   return (
     <>
-      {/* Backdrop */}
       <div 
         className={`fixed inset-0 bg-black/20 backdrop-blur-sm z-[100] transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -71,12 +70,10 @@ export function AssistantSidebar({ isOpen, onClose }: { isOpen: boolean; onClose
         onClick={onClose}
       />
 
-      {/* Sidebar */}
       <aside className={`fixed top-0 right-0 h-full w-full sm:w-[500px] bg-white z-[110] shadow-2xl transition-transform duration-500 ease-in-out transform flex flex-col ${
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}>
-        {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
+        <div className="p-4 lg:p-6 border-b border-gray-100 flex items-center justify-between bg-white relative z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
               <Brain size={20} className="text-white" />
@@ -97,7 +94,6 @@ export function AssistantSidebar({ isOpen, onClose }: { isOpen: boolean; onClose
           </button>
         </div>
 
-        {/* Chat Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/30">
           {messages.length === 0 ? (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -210,7 +206,6 @@ export function AssistantSidebar({ isOpen, onClose }: { isOpen: boolean; onClose
           <div ref={bottomRef} />
         </div>
 
-        {/* Input Footer */}
         <div className="p-6 border-t border-gray-100 bg-white relative z-10">
           <form
             onSubmit={(e) => {

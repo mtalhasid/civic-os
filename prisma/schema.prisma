@@ -67,6 +67,8 @@ model Report {
   constituencyName    String?
   assignedAuthorityId String?
   createdById         String
+  reporterName        String?
+  reportSource        String?
   citizenPhotoUrl     String?
   fixPhotoUrl         String?
   rejectionReason     String?

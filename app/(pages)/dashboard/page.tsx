@@ -42,7 +42,7 @@ export default async function DashboardPage({
 
   let authorityReports: any[] = [];
   if (user?.role === "AUTHORITY" && user?.id) {
-    // If it's an MLA login, filter by mlaName string
+    
     if ((user as any).authorityBody === "MLA") {
       authorityReports = await prisma.report.findMany({
         where: { mlaName: user.name },
@@ -53,7 +53,7 @@ export default async function DashboardPage({
         },
       });
     } else {
-      // Standard authority login (GHMC)
+      
       authorityReports = await prisma.report.findMany({
         where: { assignedAuthorityId: user.id },
         orderBy: { createdAt: "asc" },
@@ -182,7 +182,7 @@ export default async function DashboardPage({
     wardCounts = {};
   }
 
-  // Stats cards data — real data from DB
+  
   const statCards = [
     {
       id: 1,
@@ -226,15 +226,14 @@ export default async function DashboardPage({
   const monthLabel = now.toLocaleString("default", { month: "long", year: "numeric" });
 
   return (
-    <div className="p-6">
-      {/* STAT CARDS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="px-4 py-5 lg:p-6 max-w-full overflow-x-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6 lg:mb-8">
         {statCards.map((stat, i) => {
           const Icon = stat.icon;
           return (
             <div
               key={stat.id}
-              className={`relative overflow-hidden p-5 rounded-2xl shadow-lg ${stat.color} text-white group cursor-pointer`}
+              className={`relative overflow-hidden p-3.5 lg:p-5 rounded-2xl shadow-lg ${stat.color} text-white group cursor-pointer`}
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="absolute -bottom-4 -right-4 opacity-20 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
@@ -247,8 +246,8 @@ export default async function DashboardPage({
                   </div>
                   <div className="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">{stat.trend}</div>
                 </div>
-                <div className="text-2xl font-bold mb-1 tracking-tight">{stat.value}</div>
-                <div className="text-xs font-bold opacity-90 uppercase tracking-widest">{stat.label}</div>
+                <div className="text-xl lg:text-2xl font-bold mb-1 tracking-tight">{stat.value}</div>
+                <div className="text-[10px] lg:text-xs font-bold opacity-90 uppercase tracking-widest">{stat.label}</div>
                 <p className="text-[10px] opacity-60 mt-2">{stat.desc}</p>
               </div>
             </div>
@@ -256,11 +255,9 @@ export default async function DashboardPage({
         })}
       </div>
 
-      {/* MAIN CONTENT */}
       <div className="space-y-8">
-        {/* Live Heatmap card - Full Width */}
         <div className="bg-white overflow-hidden group">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white relative overflow-hidden">
+          <div className="px-4 lg:px-6 py-3 lg:py-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
               <MapIcon size={60} />
             </div>
@@ -275,19 +272,20 @@ export default async function DashboardPage({
             </div>
             <Link
               href="/feed"
-              className="relative z-10 px-4 py-2 bg-green-50 text-green-600 font-bold text-[10px] rounded-lg hover:bg-green-600 hover:text-white transition-all flex items-center gap-2 no-underline"
+              className="relative z-10 self-start px-3 py-2 lg:px-4 lg:py-2 bg-green-50 text-green-600 font-bold text-[10px] rounded-lg hover:bg-green-600 hover:text-white transition-all flex items-center gap-2 no-underline shrink-0"
             >
-              Expand Map ↗
+              <MapIcon size={14} className="lg:hidden" />
+              <span className="hidden lg:inline">Expand Map ↗</span>
+              <span className="lg:hidden">View Map</span>
             </Link>
           </div>
-          <div className="h-[650px]">
+          <div className="h-[min(55vh,400px)] lg:h-[650px]">
             <DashboardMapWrapper reports={mapReports} wardCounts={wardCounts} />
           </div>
         </div>
 
-        {/* Resolution Trends - Full Width */}
         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl overflow-hidden">
-          <div className="p-8 border-b border-gray-100 flex items-center gap-4">
+          <div className="p-4 lg:p-8 border-b border-gray-100 flex items-center gap-3 lg:gap-4">
             <div className="w-12 h-12 bg-gray-50 text-gray-900 rounded-2xl flex items-center justify-center">
               <TrendingUp size={24} />
             </div>
@@ -296,15 +294,13 @@ export default async function DashboardPage({
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Performance over time</p>
             </div>
           </div>
-          <div className="p-8">
+          <div className="p-4 lg:p-8">
             <DashboardCharts />
           </div>
         </div>
 
-        {/* Bottom Grid: Side Content Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Leaderboard CTA */}
-          <div className="relative overflow-hidden p-8 rounded-[2.5rem] bg-green-600 text-white shadow-2xl group cursor-pointer">
+          <div className="relative overflow-hidden p-5 lg:p-8 rounded-[2rem] lg:rounded-[2.5rem] bg-green-600 text-white shadow-2xl group cursor-pointer">
             <div className="absolute -bottom-8 -right-8 opacity-20 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
               <Trophy size={160} />
             </div>
@@ -325,8 +321,7 @@ export default async function DashboardPage({
             </div>
           </div>
 
-          {/* Recent Feed */}
-          <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-xl p-8 relative overflow-hidden group">
+          <div className="bg-white rounded-[2rem] lg:rounded-[2.5rem] border border-gray-100 shadow-xl p-5 lg:p-8 relative overflow-hidden group">
             <Leaf className="absolute -bottom-6 -left-6 text-green-600/5 -rotate-12 group-hover:scale-125 transition-transform" size={80} />
             <div className="flex items-center justify-between mb-8 relative z-10">
               <h2 className="text-xl font-bold text-gray-900">Recent Feed</h2>
@@ -372,9 +367,8 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        {/* Authority section */}
         {user?.role === "AUTHORITY" && (
-          <div className="bg-blue-50 border border-blue-200 rounded-[2.5rem] p-8">
+          <div className="bg-blue-50 border border-blue-200 rounded-[2rem] lg:rounded-[2.5rem] p-5 lg:p-8">
             <h2 className="text-lg font-bold text-blue-900 mb-1">Your Assigned Issues</h2>
             <p className="text-xs text-blue-500 mb-6">Sorted by oldest first</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

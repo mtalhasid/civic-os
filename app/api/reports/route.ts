@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireServerSession } from "@/lib/authServer";
+import { uploadToCloudinary } from "@/lib/cloudinaryUpload";
+import { notifyOnReportCreatedAsync } from "@/lib/notifications/notifyOnReportCreated";
 import { lookupMlaByArea } from "@/public/data/areaToMla";
 
 const REPORT_CATEGORY_VALUES = [
@@ -20,30 +22,6 @@ const REPORT_CATEGORY_VALUES = [
 ] as const;
 
 type ReportCategoryValue = (typeof REPORT_CATEGORY_VALUES)[number];
-
-// Upload a single file to Cloudinary unsigned preset, return secure_url
-async function uploadToCloudinary(file: File): Promise<string | null> {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
-  if (!cloudName || !uploadPreset) return null;
-
-  const form = new FormData();
-  form.append("file", file);
-  form.append("upload_preset", uploadPreset);
-  form.append("folder", "civicos/reports");
-
-  try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: form,
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.secure_url ?? null;
-  } catch {
-    return null;
-  }
-}
 
 export async function GET() {
   const reports = await prisma.report.findMany({
@@ -87,12 +65,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid category" }, { status: 400 });
   }
 
-  // Upload images to Cloudinary, collect URLs
   const imagesToCreate: { isMain: boolean; url: string }[] = [];
 
-  const mainImage = form.get("mainImage");
-  if (mainImage instanceof File && mainImage.size > 0) {
-    const url = await uploadToCloudinary(mainImage);
+  const mainImageFile = form.get("mainImage");
+  if (mainImageFile instanceof File && mainImageFile.size > 0) {
+    const url = await uploadToCloudinary(mainImageFile);
     if (url) imagesToCreate.push({ isMain: true, url });
   }
 
@@ -116,6 +93,7 @@ export async function POST(req: Request) {
       mlaName: mla?.mla_name ?? null,
       constituencyName: mla?.constituency ?? null,
       createdById: session.user.id,
+      reportSource: "WEB",
       images: { create: imagesToCreate },
     },
     include: {
@@ -148,5 +126,14 @@ export async function POST(req: Request) {
     });
   }
 
-  return NextResponse.json({ report });
+  const mainImage = report.images.find(img => img.isMain);
+  const whatsapp = await notifyOnReportCreatedAsync({
+    id: report.id,
+    title: report.title,
+    areaName: report.areaName,
+    category: report.category,
+    imageUrl: mainImage?.url,
+  });
+
+  return NextResponse.json({ report, whatsapp });
 }

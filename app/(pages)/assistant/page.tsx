@@ -15,20 +15,17 @@ const SUGGESTED_PROMPTS = [
 export default function AssistantPage() {
   return (
     <PageShell>
-      {/* Header */}
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Civic AI Assistant</h1>
+      <div className="p-4 lg:p-8 max-w-full overflow-x-hidden">
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Civic AI Assistant</h1>
           <p className="text-gray-500 text-sm font-medium">Ask anything about Hyderabad&apos;s civic issues. Answers are grounded in live platform data.</p>
         </div>
 
         <div className="space-y-10">
-          {/* Main Content Area */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Chat Area - Left 2/3 */}
             <div className="lg:col-span-2">
-              <div className="bg-white border border-gray-100 rounded-3xl shadow-xl overflow-hidden flex flex-col min-h-[600px]">
-                <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
+              <div className="bg-white border border-gray-100 rounded-3xl shadow-xl overflow-hidden flex flex-col min-h-[min(50vh,400px)] lg:min-h-[600px]">
+                <div className="px-4 lg:px-8 py-4 lg:py-6 border-b border-gray-100 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gray-900 rounded-xl flex items-center justify-center">
                       <Brain size={20} className="text-white" />
@@ -42,16 +39,14 @@ export default function AssistantPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex-1 flex flex-col p-6">
+                <div className="flex-1 flex flex-col p-4 lg:p-6">
                   <AssistantClient suggestedPrompts={SUGGESTED_PROMPTS} />
                 </div>
               </div>
             </div>
 
-            {/* Side Panels - Right 1/3 */}
             <div className="space-y-6">
-              {/* Intelligence Hub */}
-              <div className="relative overflow-hidden bg-gray-900 p-8 rounded-3xl text-white group">
+              <div className="relative overflow-hidden bg-gray-900 p-5 lg:p-8 rounded-3xl text-white group">
                 <div className="absolute -bottom-10 -right-10 opacity-10 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
                   <Brain size={180} />
                 </div>
@@ -81,7 +76,6 @@ export default function AssistantPage() {
                 </div>
               </div>
 
-              {/* Suggested Questions */}
               <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-9 h-9 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">

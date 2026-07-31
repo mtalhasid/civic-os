@@ -117,7 +117,11 @@ export default function NewReportPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Failed to create report");
 
-      toast.success("Report created successfully!");
+      if (data.whatsapp?.sent > 0) {
+        toast.success(`WhatsApp alert sent to ${data.whatsapp.sent} resident(s) in ${areaName}`);
+      } else {
+        toast.success("Report created successfully!");
+      }
       window.location.href = `/reports/${data.report.id}`;
     } catch (err: any) {
       const msg = err?.message || "Something went wrong";
@@ -130,8 +134,8 @@ export default function NewReportPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
-        <div className="rounded-2xl border p-6" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
+      <div className="mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 lg:py-10 max-w-full overflow-x-hidden">
+        <div className="rounded-2xl border p-4 sm:p-6" style={{ background: "var(--surface)", borderColor: "var(--border)" }}>
           <h1 className="text-2xl font-semibold" style={{ color: "var(--text-heading)" }}>
             Create report
           </h1>
@@ -289,7 +293,7 @@ export default function NewReportPage() {
             </label>
 
             {previewBody.length ? (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {previewBody.map((src) => (
                   <div key={src} className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--border)" }}>
                     <img src={src} alt="" className="h-24 w-full object-cover" />

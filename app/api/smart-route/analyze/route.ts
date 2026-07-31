@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// Haversine formula — distance between two coordinates in meters
+
 function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371000;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -14,7 +14,7 @@ function haversine(lat1: number, lng1: number, lat2: number, lng2: number): numb
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Shortest distance from point P to line segment A→B
+
 function pointToSegment(
   pLat: number, pLng: number,
   aLat: number, aLng: number,
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Route points required" }, { status: 400 });
     }
 
-    // Fetch all open civic complaints that have coordinates
+    
     const openReports = await prisma.report.findMany({
       where: {
         status: { notIn: ["CONFIRMED_FIXED", "REJECTED"] },
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Flag every complaint within 100m of the route
+    
     const flagged = openReports
       .map((r: any) => ({
         id: r.id,

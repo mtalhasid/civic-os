@@ -1,8 +1,6 @@
-/**
- * CIVICOS — Prisma Seed Script
- * Reads from data/mla.json and data/report.json
- * Run: npm run seed
- */
+
+
+
 
 import { PrismaClient } from "@prisma/client";
 import { createRequire } from "module";
@@ -23,7 +21,7 @@ function readJson(filename: string) {
   return JSON.parse(raw);
 }
 
-// ── Category Image Banks ──────────────────────────────────────────
+
 const CATEGORY_IMAGES: Record<string, string[]> = {
   POTHOLES: [
     "https://upload.wikimedia.org/wikipedia/commons/0/03/Waterlogged_roads_%26_potholes_in_Kolkata_%28India%29_%281%29.jpg",
@@ -122,11 +120,11 @@ function getImagesForCategory(category: string, reportIndex: number): { url: str
   const bank = CATEGORY_IMAGES[category] ?? CATEGORY_IMAGES["OTHER"];
   const images: { url: string; isMain: boolean }[] = [];
 
-  // Distribute primary image by picking from bank using reportIndex
+  
   const mainUrl = bank[reportIndex % bank.length];
   images.push({ url: mainUrl, isMain: true });
 
-  // No need for extra images as per user request
+  
   return images;
 }
 
@@ -153,7 +151,7 @@ const MLA_PLACEHOLDER_IMAGES = [
 async function main() {
   console.log("🌱 Starting CIVICOS seed...\n");
 
-  // ── Clear all tables ──────────────────────────────────────────
+  
   await prisma.mlaReview.deleteMany();
   await prisma.upvote.deleteMany();
   await prisma.comment.deleteMany();
@@ -166,7 +164,7 @@ async function main() {
 
   const hashedPw = await bcrypt.hash("CivicOS_Demo_2026!", 10);
 
-  // ── 1. Users ──────────────────────────────────────────────────
+  
   const authority = await prisma.user.create({
     data: {
       name: "GHMC Authority",
@@ -189,7 +187,7 @@ async function main() {
 
   console.log("✓ Created 2 users (1 authority, 1 citizen: Ahmed Khan)");
 
-  // ── 2. MLAs ───────────────────────────────────────────────────
+  
   const mlaData = readJson("mla.json");
   let mlaCount = 0;
 
@@ -209,11 +207,11 @@ async function main() {
 
   console.log(`✓ Created ${mlaCount} MLA records`);
 
-  // ── 3. Reports + images + full audit trail ─────────────────────
+  
   const reportData = readJson("report.json");
   let reportCount = 0;
 
-  // Build MLA name → id lookup
+  
   const allMlas = await prisma.mla.findMany();
   const mlaByName: Record<string, string> = {};
   for (const mla of allMlas) {
@@ -224,17 +222,17 @@ async function main() {
     const daysAgo = Math.floor(Math.random() * 60) + 10;
     const createdAt = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
 
-    // Ensure assignedMlaId is always set
+    
     let assignedMlaId = r.mlaName ? (mlaByName[r.mlaName] ?? null) : null;
     if (!assignedMlaId && allMlas.length > 0) {
       assignedMlaId = allMlas[Math.floor(Math.random() * allMlas.length)].id;
     }
 
-    // Map original status to new simplified statuses
+    
     let newStatus: "ASSIGNED" | "IN_PROGRESS" | "CONFIRMED_FIXED";
     switch (r.status) {
       case "REPORTED":
-      case "REJECTED": // Re-evaluate rejected reports as assigned
+      case "REJECTED": 
         newStatus = "ASSIGNED";
         break;
       case "RESOLVED_PENDING_VERIFICATION":
@@ -251,7 +249,7 @@ async function main() {
         break;
     }
 
-    // Build image list: primary (distributed main images)
+    
     const imageList = getImagesForCategory(r.category, reportCount);
 
     const report = await prisma.report.create({
@@ -267,7 +265,7 @@ async function main() {
         longitude: r.lng ?? null,
         createdById: citizen.id,
         assignedMlaId: assignedMlaId,
-        assignedAuthorityId: authority.id, // Always assign to authority
+        assignedAuthorityId: authority.id, 
         upvoteCount: Math.floor(Math.random() * 50),
         escalated: daysAgo > 30 && newStatus !== "CONFIRMED_FIXED",
         citizenVerified: newStatus === "CONFIRMED_FIXED" ? true : null,
@@ -280,14 +278,14 @@ async function main() {
       },
     });
 
-    // ── Chronological audit trail timestamps ──
+    
     const t1 = createdAt;
     const t2 = new Date(t1.getTime() + 2 * 24 * 60 * 60 * 1000);
     const t3 = new Date(t1.getTime() + 5 * 24 * 60 * 60 * 1000);
     const t4 = new Date(t1.getTime() + 8 * 24 * 60 * 60 * 1000);
     const t5 = new Date(t1.getTime() + 12 * 24 * 60 * 60 * 1000);
 
-    // Step 1: REPORTED (always)
+    
     await prisma.issueTimeline.create({
       data: {
         issueId: report.id,
@@ -300,7 +298,7 @@ async function main() {
       },
     });
 
-    // Step 2: ASSIGNED (always, as per new logic)
+    
     await prisma.issueTimeline.create({
       data: {
         issueId: report.id,
@@ -313,7 +311,7 @@ async function main() {
       },
     });
 
-    // Step 3: STATUS_CHANGED (In Progress)
+    
     if (newStatus === "IN_PROGRESS" || newStatus === "CONFIRMED_FIXED") {
       await prisma.issueTimeline.create({
         data: {
@@ -328,7 +326,7 @@ async function main() {
       });
     }
 
-    // Step 4: FIX_PHOTO_UPLOADED
+    
     if (newStatus === "CONFIRMED_FIXED") {
       await prisma.issueTimeline.create({
         data: {
@@ -343,7 +341,7 @@ async function main() {
       });
     }
 
-    // Step 5: CITIZEN_VERIFIED
+    
     if (newStatus === "CONFIRMED_FIXED") {
       await prisma.issueTimeline.create({
         data: {
@@ -361,10 +359,10 @@ async function main() {
     reportCount++;
   }
 
-  // ── 4. Complete Demo Report (Full Timeline) ─────────────────────
+  
   console.log("\n📝 Creating complete demo report...");
   const demoMlaId = mlaByName["Arekapudi Gandhi"] || allMlas[0]?.id;
-  const demoCreatedAt = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); // 30 days ago
+  const demoCreatedAt = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000); 
 
   const demoReport = await prisma.report.create({
     data: {
@@ -396,13 +394,13 @@ async function main() {
     },
   });
 
-  // Full timeline for demo report
+  
   const t_d1 = demoCreatedAt;
-  const t_d2 = new Date(t_d1.getTime() + 1 * 24 * 60 * 60 * 1000); // 1 day later
-  const t_d3 = new Date(t_d1.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days later
-  const t_d4 = new Date(t_d1.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days later
-  const t_d5 = new Date(t_d1.getTime() + 10 * 24 * 60 * 60 * 1000); // 10 days later
-  const t_d6 = new Date(t_d1.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days later
+  const t_d2 = new Date(t_d1.getTime() + 1 * 24 * 60 * 60 * 1000); 
+  const t_d3 = new Date(t_d1.getTime() + 3 * 24 * 60 * 60 * 1000); 
+  const t_d4 = new Date(t_d1.getTime() + 7 * 24 * 60 * 60 * 1000); 
+  const t_d5 = new Date(t_d1.getTime() + 10 * 24 * 60 * 60 * 1000); 
+  const t_d6 = new Date(t_d1.getTime() + 14 * 24 * 60 * 60 * 1000); 
 
   await prisma.issueTimeline.createMany({
     data: [

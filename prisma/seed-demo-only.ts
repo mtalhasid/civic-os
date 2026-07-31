@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🚀 Starting DEMO-ONLY seed (fast!)...\n");
 
-  // Clear all tables
+  
   await prisma.mlaReview.deleteMany();
   await prisma.upvote.deleteMany();
   await prisma.comment.deleteMany();
@@ -22,7 +22,7 @@ async function main() {
 
   const hashedPw = await bcrypt.hash("CivicOS_Demo_2026!", 10);
 
-  // 1. Create Users (Citizen + Authority)
+  
   const authority = await prisma.user.create({
     data: {
       name: "GHMC Authority",
@@ -43,7 +43,7 @@ async function main() {
   });
   console.log("✅ Created 2 users");
 
-  // 2. Create 1 MLA (Arekapudi Gandhi)
+  
   const mla = await prisma.mla.create({
     data: {
       name: "Arekapudi Gandhi",
@@ -54,7 +54,7 @@ async function main() {
   });
   console.log("✅ Created 1 MLA");
 
-  // 3. Create 1 Complete Demo Report
+  
   const demoCreatedAt = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const report = await prisma.report.create({
     data: {
@@ -87,7 +87,7 @@ async function main() {
   });
   console.log("✅ Created demo report");
 
-  // Full timeline for the demo report
+  
   const t1 = demoCreatedAt;
   const t2 = new Date(t1.getTime() + 1 * 24 * 60 * 60 * 1000);
   const t3 = new Date(t1.getTime() + 3 * 24 * 60 * 60 * 1000);

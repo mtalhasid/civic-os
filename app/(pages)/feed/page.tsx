@@ -95,12 +95,12 @@ export default async function FeedPage({
       ).map((u: any) => u.issueId)
     : [];
 
-  // Fetch ALL reports with coordinates for the map so they aren't limited to 12
+  
   const allMapReports = await prisma.report.findMany({
     where: {
       latitude: { not: null },
       longitude: { not: null },
-      ...where // apply the same categorical filters if needed
+      ...where 
     },
     select: {
       id: true,
@@ -112,7 +112,7 @@ export default async function FeedPage({
     }
   });
 
-  // Reports with coords for map
+  
   const reportsWithCoords = allMapReports
     .filter((r : any) => r.latitude !== null && r.longitude !== null)
     .map((r : any) => ({
@@ -127,97 +127,96 @@ export default async function FeedPage({
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <div className="p-10">
-      <div className="flex items-center justify-between mb-10">
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-2">Public Reports</h1>
-              <p className="text-gray-500 font-medium">Browse and track active community issues across Hyderabad.</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <form action="/feed" method="get" className="flex items-center gap-3">
-                <input type="hidden" name="page" value="1" />
-                <select
-                  name="category"
-                  defaultValue={category}
-                  className="h-10 px-4 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-600 outline-none hover:border-green-300 transition-all cursor-pointer"
-                >
-                  <option value="">All Categories</option>
-                  {REPORT_CATEGORIES.map((c) => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
-                </select>
-                <select
-                  name="status"
-                  defaultValue={statusFilter}
-                  className="h-10 px-4 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-600 outline-none hover:border-green-300 transition-all cursor-pointer"
-                >
-                  {STATUS_FILTER_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-500 hover:border-green-300 transition-all"
-                >
-                  <Filter size={18} />
-                  Filters
-                </button>
-              </form>
-              <form action="/feed" method="get">
-                <input type="hidden" name="page" value="1" />
-                <input type="hidden" name="category" value={category} />
-                <input type="hidden" name="status" value={statusFilter} />
-                <input type="hidden" name="sort" value={sort} />
-                <button
-                  type="submit"
-                  name="near"
-                  value="1"
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all text-sm"
-                >
-                  <Navigation size={18} />
-                  Near Me
-                </button>
-              </form>
-            </div>
-          </div>
+    <div className="px-4 py-6 lg:p-10 max-w-full overflow-x-hidden">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-8 lg:mb-10">
+        <div className="min-w-0">
+          <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 tracking-tight mb-2">Public Reports</h1>
+          <p className="text-sm lg:text-base text-gray-500 font-medium">Browse and track active community issues across Hyderabad.</p>
+        </div>
+        <div className="flex flex-col gap-3 w-full lg:w-auto lg:flex-row lg:items-center">
+          <form action="/feed" method="get" className="grid grid-cols-2 gap-2 w-full lg:flex lg:items-center lg:gap-3">
+            <input type="hidden" name="page" value="1" />
+            <select
+              name="category"
+              defaultValue={category}
+              className="h-10 px-3 lg:px-4 bg-white border border-gray-200 rounded-2xl text-xs lg:text-sm font-bold text-gray-600 outline-none hover:border-green-300 transition-all cursor-pointer min-w-0"
+            >
+              <option value="">All Categories</option>
+              {REPORT_CATEGORIES.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
+            </select>
+            <select
+              name="status"
+              defaultValue={statusFilter}
+              className="h-10 px-3 lg:px-4 bg-white border border-gray-200 rounded-2xl text-xs lg:text-sm font-bold text-gray-600 outline-none hover:border-green-300 transition-all cursor-pointer min-w-0"
+            >
+              {STATUS_FILTER_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="col-span-2 lg:col-span-1 flex items-center justify-center gap-2 h-10 px-4 bg-white border border-gray-200 rounded-2xl text-xs lg:text-sm font-bold text-gray-500 hover:border-green-300 transition-all"
+              title="Apply filters"
+            >
+              <Filter size={18} />
+              <span className="lg:inline">Filters</span>
+            </button>
+          </form>
+          <form action="/feed" method="get" className="w-full lg:w-auto">
+            <input type="hidden" name="page" value="1" />
+            <input type="hidden" name="category" value={category} />
+            <input type="hidden" name="status" value={statusFilter} />
+            <input type="hidden" name="sort" value={sort} />
+            <button
+              type="submit"
+              name="near"
+              value="1"
+              className="flex w-full lg:w-auto items-center justify-center gap-2 h-10 px-4 bg-gray-900 text-white font-bold rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xs lg:text-sm"
+              title="Near Me"
+            >
+              <Navigation size={18} />
+              <span>Near Me</span>
+            </button>
+          </form>
+        </div>
+      </div>
 
-          {/* ── MAP VIEW ── */}
-          <div className="mb-16 -mx-10">
-            <div className="bg-white shadow-2xl overflow-hidden relative group">
-              <div className="h-[550px]">
-                <ReportsGlobalMapClient reports={reportsWithCoords} />
-              </div>
-            </div>
+      <div className="mb-10 lg:mb-16 lg:-mx-10">
+        <div className="bg-white shadow-2xl overflow-hidden relative group rounded-2xl lg:rounded-none">
+          <div className="h-[min(50vh,380px)] lg:h-[550px]">
+            <ReportsGlobalMapClient reports={reportsWithCoords} />
           </div>
+        </div>
+      </div>
 
-          {/* ── REPORTS LIST ── */}
-          <div className="space-y-10">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Recent Feed</h2>
-                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
-                  Showing {reports.length} of {total.toLocaleString()} results
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Sort by:</span>
-                <form action="/feed" method="get">
-                  <input type="hidden" name="page" value="1" />
-                  <input type="hidden" name="category" value={category} />
-                  <input type="hidden" name="status" value={statusFilter} />
-                  <select
-                    name="sort"
-                    defaultValue={sort}
-                    onChange={undefined}
-                    className="bg-green-50 px-4 py-2 rounded-xl text-xs font-bold text-green-600 outline-none cursor-pointer border border-green-100"
-                  >
-                    {SORT_OPTIONS.map((o) => (
-                      <option key={o.value} value={o.value}>{o.label}</option>
-                    ))}
-                  </select>
-                </form>
-              </div>
-            </div>
+      <div className="space-y-8 lg:space-y-10">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">Recent Feed</h2>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">
+              Showing {reports.length} of {total.toLocaleString()} results
+            </p>
+          </div>
+          <div className="flex items-center gap-2 lg:gap-3 shrink-0">
+            <span className="hidden sm:inline text-xs font-bold text-gray-400 uppercase tracking-widest">Sort:</span>
+            <form action="/feed" method="get" className="w-full sm:w-auto">
+              <input type="hidden" name="page" value="1" />
+              <input type="hidden" name="category" value={category} />
+              <input type="hidden" name="status" value={statusFilter} />
+              <select
+                name="sort"
+                defaultValue={sort}
+                className="w-full sm:w-auto bg-green-50 px-3 lg:px-4 py-2 rounded-xl text-xs font-bold text-green-600 outline-none cursor-pointer border border-green-100"
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </form>
+          </div>
+        </div>
 
             {reports.length === 0 ? (
               <div className="py-20 text-center">
@@ -252,10 +251,9 @@ export default async function FeedPage({
               </div>
             )}
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center pt-12">
-                <div className="flex items-center gap-3">
+              <div className="flex justify-center pt-8 lg:pt-12">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto max-w-full px-0">
                   {page > 1 && (
                     <Link
                       href={`/feed?${new URLSearchParams({
@@ -265,12 +263,12 @@ export default async function FeedPage({
                         ...(statusFilter && { status: statusFilter }),
                         page: String(page - 1),
                       }).toString()}`}
-                      className="flex items-center gap-3 px-8 py-4 bg-white border-2 border-gray-100 rounded-[2.5rem] text-sm font-bold text-gray-500 hover:border-green-600 hover:text-green-600 transition-all no-underline"
+                      className="flex items-center justify-center gap-2 px-5 lg:px-8 py-3 lg:py-4 bg-white border-2 border-gray-100 rounded-2xl lg:rounded-[2.5rem] text-sm font-bold text-gray-500 hover:border-green-600 hover:text-green-600 transition-all no-underline"
                     >
                       ← Previous
                     </Link>
                   )}
-                  <span className="px-6 py-4 bg-green-50 text-green-600 font-bold text-sm rounded-[2.5rem] border border-green-100">
+                  <span className="flex items-center justify-center px-4 lg:px-6 py-3 lg:py-4 bg-green-50 text-green-600 font-bold text-sm rounded-2xl lg:rounded-[2.5rem] border border-green-100 text-center">
                     Page {page} of {totalPages}
                   </span>
                   {page < totalPages && (
@@ -282,9 +280,10 @@ export default async function FeedPage({
                         ...(statusFilter && { status: statusFilter }),
                         page: String(page + 1),
                       }).toString()}`}
-                      className="group flex items-center gap-3 px-8 py-4 bg-white border-2 border-gray-100 rounded-[2.5rem] text-sm font-bold text-gray-500 hover:border-green-600 hover:text-green-600 transition-all no-underline"
+                      className="group flex items-center justify-center gap-2 px-5 lg:px-8 py-3 lg:py-4 bg-white border-2 border-gray-100 rounded-2xl lg:rounded-[2.5rem] text-sm font-bold text-gray-500 hover:border-green-600 hover:text-green-600 transition-all no-underline"
                     >
-                      Load More Reports
+                      <span className="sm:hidden">More</span>
+                      <span className="hidden sm:inline">Load More Reports</span>
                       <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   )}

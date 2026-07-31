@@ -21,7 +21,7 @@ export type MlaStatsRow = {
   rejected: number;
   resolutionRate: number;
   avgResolutionDays: number | null;
-  ignoredCount: number; // issues open 30+ days
+  ignoredCount: number; 
 };
 
 function constituencyToSlug(constituency: string): string {

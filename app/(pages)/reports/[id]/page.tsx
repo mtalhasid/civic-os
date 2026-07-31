@@ -64,7 +64,6 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ i
 
   return (
     <PageShell>
-      {/* Back nav */}
       <div className="px-8 pt-6">
         <Link
           href="/feed"

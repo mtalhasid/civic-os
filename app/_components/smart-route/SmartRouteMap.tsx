@@ -43,7 +43,7 @@ function categoryColor(category: string) {
   if (cat.includes("WATER") || cat.includes("FLOOD")) return "#3b82f6";
   if (cat.includes("LIGHT") || cat.includes("TRAFFIC")) return "#eab308";
   if (cat.includes("ANIMAL") || cat.includes("DOG")) return "#8b5cf6";
-  return "#10b981"; // default green
+  return "#10b981"; 
 }
 
 function getCategoryLabel(category: string) {
@@ -102,48 +102,42 @@ export default function SmartRouteMap({
   useEffect(() => {
     if (!mapRef.current || map) return;
 
-    // Use a small delay to ensure container is fully dimensioned
+    let instance: L.Map | null = null;
     const initTimeout = setTimeout(() => {
-      if (!mapRef.current || map) return;
+      if (!mapRef.current) return;
 
-      const instance = L.map(mapRef.current, { 
+      instance = L.map(mapRef.current, {
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
       });
-      
+
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors",
         maxZoom: 19,
       }).addTo(instance);
 
-      // Default view for Hyderabad
       instance.setView([17.385, 78.4867], 12);
-      
-      // Force immediate resize check
       instance.invalidateSize();
       setMap(instance);
     }, 100);
 
     return () => {
       clearTimeout(initTimeout);
-      if (map) {
-        //@ts-ignore
-        map.remove();
-        setMap(null);
-      }
+      instance?.remove();
+      setMap(null);
     };
   }, []);
 
   useEffect(() => {
     if (!map) return;
     
-    // Clear existing layers except tile layer
+    
     map.eachLayer((layer) => {
       if (layer instanceof L.TileLayer) return;
       map.removeLayer(layer);
     });
 
-    // Track IDs of flagged complaints to avoid double-rendering
+    
     const flaggedIds = new Set(flaggedComplaints.map(c => c.id));
 
     allReports.forEach((report) => {
@@ -171,10 +165,8 @@ export default function SmartRouteMap({
       }
     });
 
-    // 2. Draw the route polyline if exists
     let polyline: L.Polyline | null = null;
     if (routePoints.length > 0) {
-      // Glow effect for route
       L.polyline(routePoints, {
         color: "#16a34a",
         weight: 12,
@@ -189,7 +181,7 @@ export default function SmartRouteMap({
       }).addTo(map);
     }
 
-    // 3. Source & Destination pins
+    
     if (sourceCoords && destCoords) {
       const greenIcon = L.divIcon({
         className: "custom-div-icon",
@@ -218,7 +210,7 @@ export default function SmartRouteMap({
         .bindPopup(`<strong>End:</strong> ${destName}`);
     }
 
-    // 4. Highlighted Warning pins for flagged complaints
+    
     flaggedComplaints.forEach((complaint) => {
       const warningIcon = L.divIcon({
         className: "custom-div-icon",
@@ -242,15 +234,15 @@ export default function SmartRouteMap({
         );
     });
 
-    // 5. Fit to route bounds if polyline exists, otherwise fit to all reports if they exist
+    
     if (polyline) {
       map.fitBounds(polyline.getBounds(), { padding: [40, 40] });
     } else if (allReports.length > 0 && !sourceCoords) {
-      // If no route, but we have reports, ensure we can see them (center on Hyderabad)
+      
       map.setView([17.385, 78.4867], 12);
     }
 
-    // Force map to update its size calculation after a small delay
+    
     setTimeout(() => {
       map.invalidateSize();
     }, 100);
@@ -266,7 +258,6 @@ export default function SmartRouteMap({
     >
       <div ref={mapRef} className="w-full h-full relative" />
       
-      {/* Full Screen Toggle Button */}
       <div className="absolute top-6 right-6 z-[10001]">
         <button
           onClick={toggleFullScreen}
@@ -284,7 +275,6 @@ export default function SmartRouteMap({
         </button>
       </div>
       
-      {/* Map Legend */}
       <div className="absolute bottom-6 left-6 z-[1000] bg-white/95 backdrop-blur-md shadow-xl rounded-2xl p-4 border border-gray-100 flex flex-col gap-2 pointer-events-auto">
         <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Issue Types</h4>
         {["ROAD", "GARBAGE", "WATER", "LIGHT", "ANIMAL", "OTHER"].map((cat) => (

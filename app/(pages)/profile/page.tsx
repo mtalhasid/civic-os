@@ -34,7 +34,7 @@ export default async function ProfilePage() {
 
   if (!dbUser) redirect("/login");
 
-  // Get user's reports
+  
   const reports = await prisma.report.findMany({
     where: { createdById: user.id },
     orderBy: { createdAt: "desc" },
@@ -43,7 +43,7 @@ export default async function ProfilePage() {
     },
   });
 
-  // Impact stats
+  
   const totalReported = reports.length;
   const confirmedFixed = reports.filter((r : any) => r.status === "CONFIRMED_FIXED").length;
 
@@ -62,8 +62,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6">
-        {/* Profile header */}
+      <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 lg:py-8 overflow-x-hidden">
         <div
           className="rounded-2xl border p-6"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
@@ -117,8 +116,7 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        {/* Impact stats */}
-        <div className="mt-6 grid grid-cols-3 gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           <div
             className="rounded-2xl border p-5 text-center"
             style={{ background: "var(--surface)", borderColor: "var(--border)" }}
@@ -163,7 +161,6 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        {/* User's reported issues */}
         <div
           className="mt-6 rounded-2xl border p-6"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
@@ -219,7 +216,6 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        {/* Comment history */}
         <div
           className="mt-6 rounded-2xl border p-6"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}

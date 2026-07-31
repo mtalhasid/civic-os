@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authServer";
+import { notifyOnReportCreatedAsync } from "@/lib/notifications/notifyOnReportCreated";
 
 export async function POST(req: Request) {
   try {
@@ -12,19 +13,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Try to get session, otherwise use a default user
     const session = await getServerSession(authOptions);
     let userId = session?.user?.id;
 
     if (!userId) {
-      // Find the default citizen user (Ahmed Khan) from seed
       const defaultUser = await prisma.user.findFirst({
         where: { email: "ahmed.khan@gmail.com" },
       });
       if (defaultUser) {
         userId = defaultUser.id;
       } else {
-        // Fallback to any user if seed user not found
         const anyUser = await prisma.user.findFirst();
         if (anyUser) {
           userId = anyUser.id;
@@ -34,7 +32,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Create the report
     const report = await prisma.report.create({
       data: {
         title,
@@ -50,7 +47,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // Add timeline entry
     await prisma.issueTimeline.create({
       data: {
         issueId: report.id,
@@ -62,10 +58,18 @@ export async function POST(req: Request) {
       },
     });
 
+    const whatsapp = await notifyOnReportCreatedAsync({
+      id: report.id,
+      title: report.title,
+      areaName: report.areaName,
+      category: report.category,
+    });
+
     return NextResponse.json({
       success: true,
       reportId: report.id,
       message: "Report successfully created from extension",
+      whatsapp,
     });
   } catch (error: any) {
     console.error("Extension report error:", error);

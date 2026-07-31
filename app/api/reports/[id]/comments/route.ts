@@ -31,7 +31,7 @@ export async function POST(
 
   const user = session.user as any;
 
-  // Check if the user ID actually exists in the database to avoid foreign key errors
+  
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
     select: { id: true },
@@ -46,7 +46,7 @@ export async function POST(
     return NextResponse.json({ error: "Comment cannot be empty" }, { status: 400 });
   }
 
-  // Verify issue exists
+  
   const issue = await prisma.report.findUnique({ where: { id } });
   if (!issue) {
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
@@ -58,7 +58,7 @@ export async function POST(
     prisma.comment.create({
       data: {
         issueId: id,
-        userId: validUserId as string, // Note: This might still fail if userId is required and null
+        userId: validUserId as string, 
         content,
         isOfficial,
       },

@@ -18,9 +18,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Source and destination required" }, { status: 400 });
     }
 
-    // Geocode both sequentially (Nominatim rate limit: 1 req/sec)
+    
     const srcCoords = await geocode(source);
-    await new Promise((r) => setTimeout(r, 1100)); // respect rate limit
+    await new Promise((r) => setTimeout(r, 1100)); 
     const dstCoords = await geocode(destination);
 
     if (!srcCoords) {
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `Could not find location: "${destination}"` }, { status: 400 });
     }
 
-    // OSRM routing
+    
     const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${srcCoords.lng},${srcCoords.lat};${dstCoords.lng},${dstCoords.lat}?overview=full&geometries=geojson`;
     const osrmRes = await fetch(osrmUrl);
     const osrmData = await osrmRes.json();
@@ -40,15 +40,15 @@ export async function POST(req: Request) {
     }
 
     const route = osrmData.routes[0];
-    // OSRM returns [lng, lat] — convert to [lat, lng] for Leaflet
+    
     const routePoints: [number, number][] = route.geometry.coordinates.map(
       ([lng, lat]: [number, number]) => [lat, lng]
     );
 
     return NextResponse.json({
       routePoints,
-      totalDistance: route.distance,   // meters
-      totalDuration: route.duration,   // seconds
+      totalDistance: route.distance,   
+      totalDuration: route.duration,   
       sourceCoords: srcCoords,
       destCoords: dstCoords,
     });

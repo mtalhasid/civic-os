@@ -10,7 +10,7 @@ if (typeof window !== "undefined") {
   require("leaflet.heat");
 }
 
-// Types
+
 export type MapReport = {
   id: string;
   title: string;
@@ -23,30 +23,30 @@ export type MapReport = {
 
 export type WardCountMap = Record<string, { unresolvedCount: number; totalCount: number }>;
 
-// ── Heatmap Component ──
+
 function HeatmapLayer({ points }: { points: [number, number, number][] }) {
   const map = useMap();
 
   useEffect(() => {
     if (!map || !points.length) return;
     
-    // @ts-ignore
+    
     if (!L.heatLayer) {
       console.warn("leaflet.heat not yet available");
       return;
     }
 
-    // @ts-ignore
+    
     const heat = L.heatLayer(points, {
       radius: 35,
       blur: 20,
       max: 2,
       gradient: {
-        0.2: "#3b82f6", // blue
-        0.4: "#10b981", // green
-        0.6: "#eab308", // yellow
-        0.8: "#f97316", // orange
-        1.0: "#ef4444", // red
+        0.2: "#3b82f6", 
+        0.4: "#10b981", 
+        0.6: "#eab308", 
+        0.8: "#f97316", 
+        1.0: "#ef4444", 
       },
     });
 
@@ -68,7 +68,7 @@ function getCategoryColor(category: string) {
   if (cat.includes("WATER") || cat.includes("FLOOD")) return "#3b82f6";
   if (cat.includes("LIGHT") || cat.includes("TRAFFIC")) return "#eab308";
   if (cat.includes("DOG") || cat.includes("ANIMAL")) return "#8b5cf6";
-  return "#10b981"; // default green
+  return "#10b981"; 
 }
 
 function getCategoryLabel(category: string) {
@@ -143,7 +143,7 @@ export default function DashboardMapClient({
     }
   };
 
-  // Load GeoJSON for Ward Shapes
+  
   useEffect(() => {
     fetch("/data/ghmc-wards.geojson")
       .then(res => {
@@ -158,14 +158,14 @@ export default function DashboardMapClient({
     return (reports || []).map((r) => [r.latitude, r.longitude, 1]);
   }, [reports]);
 
-  // FUZZY MATCHING FOR WARD NAMES
+  
   const getStatsForWard = (wardNameFromGeo: string) => {
     if (!wardNameFromGeo) return null;
     
-    // Direct match
+    
     if (wardCounts[wardNameFromGeo]) return wardCounts[wardNameFromGeo];
     
-    // Fuzzy match
+    
     const cleanGeoName = wardNameFromGeo.toLowerCase().replace(/ward\s+\d+\s+/i, "").trim();
     const key = Object.keys(wardCounts).find(k => {
       const cleanKey = k.toLowerCase().replace(/ward\s+\d+\s+/i, "").trim();
@@ -194,7 +194,6 @@ export default function DashboardMapClient({
     const stats = getStatsForWard(wardName);
     const count = stats?.unresolvedCount || 0;
     
-    // VIBRANT COLORS FOR CHOROPLETH
     let color = "#f8fafc"; 
     let stroke = "#cbd5e1";
     let fillOpacity = 0.6;
@@ -220,40 +219,39 @@ export default function DashboardMapClient({
         isFullScreen ? "h-screen" : "h-full min-h-[500px]"
       }`}
     >
-      {/* Map Controls Overlay - Center Top */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-[1000001] flex flex-col gap-3">
+      <div className="absolute top-3 lg:top-6 left-1/2 -translate-x-1/2 z-[1000001] flex flex-col gap-3 max-w-[calc(100%-1.5rem)]">
         <div className="bg-white border-2 border-gray-200 rounded-2xl p-1 shadow-2xl flex gap-1">
           {[
-            { id: "heat", label: "Heatmap" },
-            { id: "pins", label: "Pins" },
-            { id: "zones", label: "Zones" }
+            { id: "heat", label: "Heatmap", short: "H" },
+            { id: "pins", label: "Pins", short: "P" },
+            { id: "zones", label: "Zones", short: "Z" }
           ].map(opt => (
             <button
               key={opt.id}
               onClick={() => setView(opt.id as any)}
-              className={`px-4 py-1.5 rounded-xl text-[10px] font-black transition-all ${
+              className={`px-2.5 lg:px-4 py-1.5 rounded-xl text-[10px] font-black transition-all ${
                 view === opt.id ? "bg-green-600 text-white shadow-lg" : "text-gray-500 hover:bg-gray-100"
               }`}
             >
-              {opt.label}
+              <span className="lg:hidden">{opt.short}</span>
+              <span className="hidden lg:inline">{opt.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Full Screen Button */}
-      <div className="absolute top-6 right-6 z-[1000001]">
+      <div className="absolute top-3 lg:top-6 right-3 lg:right-6 z-[1000001]">
         <button
           onClick={toggleFullScreen}
-          className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 border border-gray-200 font-black rounded-xl shadow-2xl hover:bg-gray-50 transition-all active:scale-95 text-[10px] uppercase tracking-widest"
+          className="flex items-center justify-center gap-2 p-2.5 lg:px-4 lg:py-2 bg-white text-gray-900 border border-gray-200 font-black rounded-xl shadow-2xl hover:bg-gray-50 transition-all active:scale-95 text-[10px] uppercase tracking-widest"
+          title={isFullScreen ? "Exit full screen" : "Full screen"}
         >
-          {isFullScreen ? <><X size={14} /> EXIT</> : <><Maximize2 size={14} /> Full Screen</>}
+          {isFullScreen ? <><X size={14} /><span className="hidden lg:inline"> EXIT</span></> : <><Maximize2 size={14} /><span className="hidden lg:inline"> Full Screen</span></>}
         </button>
       </div>
 
-      {/* Map Legend */}
       {view === "pins" && (
-        <div className="absolute bottom-6 left-[80px] z-[1000] bg-white/95 backdrop-blur-xl shadow-xl rounded-xl p-3 border border-gray-100 flex flex-col gap-1.5 pointer-events-auto">
+        <div className="absolute bottom-3 lg:bottom-6 left-3 lg:left-[80px] z-[1000] max-w-[calc(100%-1.5rem)] bg-white/95 backdrop-blur-xl shadow-xl rounded-xl p-2.5 lg:p-3 border border-gray-100 flex flex-col gap-1 pointer-events-auto">
           <h4 className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Issue Types</h4>
           {["ROAD", "GARBAGE", "WATER", "LIGHT", "ANIMAL", "OTHER"].map((cat) => (
             <div key={cat} className="flex items-center gap-2">
@@ -277,10 +275,8 @@ export default function DashboardMapClient({
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
 
-        {/* 1. Heatmap Layer */}
         {view === "heat" && <HeatmapLayer points={heatPoints} />}
 
-        {/* 2. Pins Layer */}
         {view === "pins" && (reports || []).map(r => (
           <Marker 
             key={r.id} 
@@ -296,7 +292,6 @@ export default function DashboardMapClient({
           </Marker>
         ))}
 
-        {/* 3. Zones Layer (GeoJSON) */}
         {view === "zones" && geoData && (
           <GeoJSON 
             data={geoData} 

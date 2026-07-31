@@ -1,4 +1,4 @@
-// Service worker for background tasks
+
 const GEMINI_API_KEY = "AIzaSyDmIO2A2SrMJaM6YhV1BvoyzjIbjbpMfqE"
 const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
@@ -8,14 +8,14 @@ const isProcessing = false
 chrome.runtime.onInstalled.addListener(() => {
   console.log("[v0] CIVICOS Verifier extension installed")
 
-  // Initialize storage
+  
   chrome.storage.local.get("verificationHistory", (result) => {
     if (!result.verificationHistory) {
       chrome.storage.local.set({ verificationHistory: [] })
     }
   })
 
-  // Initialize settings
+  
   chrome.storage.local.get("extensionSettings", (result) => {
     if (!result.extensionSettings) {
       chrome.storage.local.set({
@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .catch((error) => {
         sendResponse({ success: false, error: error.message })
       })
-    return true // Keep channel open for async response
+    return true 
   }
 
   if (request.action === "submitToAPI") {
@@ -107,7 +107,7 @@ Format as JSON.`
 async function submitDataToAPI(data) {
   console.log("[v0] Background: Submitting data", data)
 
-  // Store submission locally first
+  
   const submission = {
     ...data,
     timestamp: new Date().toISOString(),
@@ -121,7 +121,7 @@ async function submitDataToAPI(data) {
     chrome.storage.local.set({ submissions })
   })
 
-  // Send to CIVICOS backend API
+  
   try {
     const response = await fetch("https://civicos-web.vercel.app/api/extension/report", {
       method: "POST",
@@ -179,7 +179,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     const selectedText = info.selectionText || info.linkUrl || ""
     console.log("[v0] Context menu verification triggered:", selectedText)
 
-    // Send message to popup
     chrome.tabs
       .sendMessage(tab.id, {
         action: "verifyCivicContent",

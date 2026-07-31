@@ -17,6 +17,7 @@ import {
   TrendingUp,
   ChevronUp,
   ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 type SortKey = "overall" | "rate" | "fixed" | "ignored" | "reopened";
@@ -48,13 +49,13 @@ export default async function LeaderboardPage({
     ? sort
     : "overall") as SortKey;
 
-  // ── Leaderboard data ──────────────────────────────────────────
+  
   const mlas = await getMlaStatsFromReports();
   const sorted = sortMlas(mlas, sortKey);
   const top5 = [...mlas].sort((a, b) => b.resolutionRate - a.resolutionRate).slice(0, 5);
   const bottom5 = [...mlas].sort((a, b) => a.resolutionRate - b.resolutionRate).slice(0, 5);
 
-  // ── Stats (from old Stats page) ───────────────────────────────
+  
   const now = new Date();
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -120,12 +121,11 @@ export default async function LeaderboardPage({
     <PageShell>
 
 
-      <div className="p-8">
-        {/* Page title */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Hyderabad Civic Health Score</h1>
-            <p className="text-gray-500 text-sm font-medium">This month's snapshot</p>
+      <div className="p-4 lg:p-8 max-w-full overflow-x-hidden">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 lg:mb-8">
+          <div className="min-w-0">
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Hyderabad Civic Health Score</h1>
+            <p className="text-gray-500 text-sm font-medium">This month&apos;s snapshot</p>
           </div>
           <div className="flex items-center gap-2">
             <div className="px-5 py-2.5 bg-green-50 text-green-600 text-xs font-bold rounded-xl border border-green-100">
@@ -134,10 +134,8 @@ export default async function LeaderboardPage({
           </div>
         </div>
 
-        {/* ── CIVIC HEALTH OVERVIEW ── */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-10">
-          {/* Main Score Card */}
-          <div className="lg:col-span-2 relative overflow-hidden p-8 rounded-[2rem] bg-green-600 text-white shadow-xl group cursor-pointer">
+          <div className="lg:col-span-2 relative overflow-hidden p-5 lg:p-8 rounded-[1.5rem] lg:rounded-[2rem] bg-green-600 text-white shadow-xl group cursor-pointer">
             <div className="absolute -bottom-10 -right-10 opacity-20 group-hover:scale-110 transition-transform duration-700 pointer-events-none">
               <Activity size={180} />
             </div>
@@ -151,7 +149,7 @@ export default async function LeaderboardPage({
                 </div>
               </div>
               <div className="flex items-baseline gap-1.5 mb-1.5">
-                <span className="text-5xl font-bold tracking-tighter">{civicScore}</span>
+                <span className="text-4xl lg:text-5xl font-bold tracking-tighter">{civicScore}</span>
                 <span className="text-xl font-bold opacity-60">/100</span>
               </div>
               <h3 className="text-xl font-bold mb-3 tracking-tight">Civic Health Score</h3>
@@ -162,7 +160,6 @@ export default async function LeaderboardPage({
             </div>
           </div>
 
-          {/* Quick Stats Grid */}
           <div className="lg:col-span-2 grid grid-cols-2 gap-4">
             {[
               { label: "Total Issues", value: totalReports.toLocaleString(), icon: AlertTriangle, color: "text-amber-500", bg: "bg-amber-50" },
@@ -170,7 +167,7 @@ export default async function LeaderboardPage({
               { label: "Avg Fix Time", value: avgDays > 0 ? `${avgDays.toFixed(1)}d` : "—", icon: Clock, color: "text-blue-500", bg: "bg-blue-50" },
               { label: "Escalated (30+ days)", value: escalatedCount.toLocaleString(), icon: XCircle, color: "text-red-500", bg: "bg-red-50" },
             ].map((stat, i) => (
-              <div key={i} className="p-6 rounded-3xl bg-white border border-gray-100 shadow-lg flex flex-col justify-between group hover:-translate-y-1 transition-transform">
+              <div key={i} className="p-4 lg:p-6 rounded-3xl bg-white border border-gray-100 shadow-lg flex flex-col justify-between group hover:-translate-y-1 transition-transform">
                 <div className={`w-10 h-10 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <stat.icon size={20} />
                 </div>
@@ -183,9 +180,7 @@ export default async function LeaderboardPage({
           </div>
         </div>
 
-        {/* ── CHARTS & LISTS ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-          {/* Issues by Category */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-lg p-6 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
               <Trophy size={60} />
@@ -196,7 +191,6 @@ export default async function LeaderboardPage({
             </div>
           </div>
 
-          {/* Top 5 Wards */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-lg p-6 relative overflow-hidden group">
             <Leaf className="absolute -top-6 -right-6 text-green-600/5 rotate-45 group-hover:scale-125 transition-transform" size={60} />
             <h2 className="text-lg font-bold text-gray-900 mb-6">Top 5 Wards This Month</h2>
@@ -229,7 +223,6 @@ export default async function LeaderboardPage({
             </div>
           </div>
 
-          {/* Bottom 5 Wards */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-lg p-6 relative overflow-hidden group">
             <Leaf className="absolute -bottom-6 -left-6 text-green-600/5 -rotate-12 group-hover:scale-125 transition-transform" size={60} />
             <h2 className="text-lg font-bold text-gray-900 mb-6">Bottom 5 Wards</h2>
@@ -263,15 +256,13 @@ export default async function LeaderboardPage({
           </div>
         </div>
 
-        {/* ── MLA PERFORMANCE RANKINGS ── */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-1.5">MLA Performance Rankings</h2>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8">
+          <div className="min-w-0">
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight mb-1.5">MLA Performance Rankings</h2>
             <p className="text-gray-500 text-sm font-medium">Historical performance data breakdown.</p>
           </div>
         </div>
 
-        {/* Sort Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
           {tabs.map((tab) => (
             <Link
@@ -287,7 +278,6 @@ export default async function LeaderboardPage({
           ))}
         </div>
 
-        {/* Top 3 Podium Cards */}
         {top3.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
             {top3.map((mla, i) => (
@@ -321,15 +311,50 @@ export default async function LeaderboardPage({
           </div>
         )}
 
-        {/* Full Table */}
-        <div className="bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden mb-12">
+        <div className="bg-white rounded-[1.5rem] lg:rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden mb-8 lg:mb-12">
           {sorted.length === 0 ? (
-            <div className="p-20 text-center">
+            <div className="p-12 lg:p-20 text-center">
               <p className="text-gray-400 font-bold text-sm">No MLA data yet. Reports will populate the leaderboard.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <>
+              <div className="lg:hidden divide-y divide-gray-100">
+                {sorted.map((mla, idx) => {
+                  const rank = idx + 1;
+                  const isTop3 = rank <= 3;
+                  return (
+                    <Link
+                      key={`${mla.mlaName}-${mla.constituency}-mobile`}
+                      href={`/authorities/mla/${mla.slug}`}
+                      className="block p-4 hover:bg-green-50/30 transition-all no-underline"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[10px] shrink-0 ${isTop3 ? "bg-green-600 text-white" : "bg-gray-50 text-gray-900"}`}>
+                          #{rank}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-bold text-gray-900 truncate">{mla.mlaName}</div>
+                          <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate">{mla.constituency}</div>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                              <CheckCircle2 size={12} /> {mla.resolutionRate.toFixed(0)}%
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full">
+                              <CheckCircle2 size={12} /> {mla.confirmedFixed}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                              <Clock size={12} /> {mla.pending}
+                            </span>
+                          </div>
+                        </div>
+                        <ChevronRight size={16} className="text-gray-300 shrink-0 mt-1" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="hidden lg:block overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                   <tr className="bg-green-50/50 border-b border-gray-100">
                     {["Rank", "MLA & Ward", "Resolution %", "Fixed", "Pending", "Avg Days", "Reopened", "Ignored"].map((h) => (
@@ -411,7 +436,8 @@ export default async function LeaderboardPage({
                   })}
                 </tbody>
               </table>
-            </div>
+              </div>
+            </>
           )}
         </div>
       </div>

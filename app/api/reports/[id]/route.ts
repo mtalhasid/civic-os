@@ -30,7 +30,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // Check if current user has upvoted
+  
   let userUpvoted = false;
   if (userId) {
     const upvote = await prisma.upvote.findUnique({

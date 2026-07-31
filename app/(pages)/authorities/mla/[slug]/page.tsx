@@ -87,7 +87,6 @@ export default async function MlaProfilePage({ params }: { params: Promise<{ slu
   return (
     <PageShell>
       <div className="bg-gray-50/30 min-h-screen">
-        {/* Hero Header */}
         <div className="relative h-64 bg-gray-900 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-green-900/50" />
           <div className="absolute inset-0 opacity-5">
@@ -95,46 +94,47 @@ export default async function MlaProfilePage({ params }: { params: Promise<{ slu
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-600 rounded-full blur-3xl" />
           </div>
 
-          <div className="absolute top-6 left-8 z-20">
-            <Link href="/authorities" className="flex items-center gap-2 text-white/60 hover:text-white transition-colors font-bold text-[11px] uppercase tracking-widest no-underline">
-              <ChevronLeft size={16} /> Back to Authorities
+          <div className="absolute top-4 left-4 lg:top-6 lg:left-8 z-20">
+            <Link href="/authorities" className="flex items-center gap-2 text-white/60 hover:text-white transition-colors font-bold text-[10px] lg:text-[11px] uppercase tracking-widest no-underline">
+              <ChevronLeft size={16} /> <span className="hidden sm:inline">Back to Authorities</span><span className="sm:hidden">Back</span>
             </Link>
           </div>
 
-          <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="flex items-center gap-6">
-              <div className="w-28 h-28 rounded-[2rem] bg-green-600 border-4 border-white shadow-2xl overflow-hidden flex items-center justify-center text-white text-4xl font-bold">
+          <div className="absolute bottom-0 left-0 w-full p-4 lg:p-8 z-20 flex flex-col md:flex-row md:items-end justify-between gap-4 lg:gap-6">
+            <div className="flex items-center gap-4 lg:gap-6 min-w-0">
+              <div className="w-20 h-20 lg:w-28 lg:h-28 rounded-2xl lg:rounded-[2rem] bg-green-600 border-4 border-white shadow-2xl overflow-hidden flex items-center justify-center text-white text-2xl lg:text-4xl font-bold shrink-0">
                 {mla.photoUrl ? (
                   <img src={mla.photoUrl} alt={mla.mlaName} className="w-full h-full object-cover" />
                 ) : (
                   mla.mlaName.charAt(0)
                 )}
               </div>
-              <div>
-                <div className="flex items-center gap-3 mb-1.5">
-                  <h1 className="text-3xl font-bold text-white tracking-tight">{mla.mlaName}</h1>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2 lg:gap-3 mb-1.5">
+                  <h1 className="text-xl lg:text-3xl font-bold text-white tracking-tight">{mla.mlaName}</h1>
                   {myRank != null && (
                     <span className="px-2.5 py-0.5 bg-green-600 text-white rounded-full text-[9px] font-bold uppercase tracking-widest">
                       #{myRank} Ranked
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-5 text-white/60 font-medium text-xs">
-                  <div className="flex items-center gap-1.5"><MapPin size={14} className="text-green-400" />{mla.constituency}</div>
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 sm:gap-5 text-white/60 font-medium text-xs">
+                  <div className="flex items-center gap-1.5"><MapPin size={14} className="text-green-400 shrink-0" />{mla.constituency}</div>
                   {myRank != null && (
-                    <div className="flex items-center gap-1.5"><Trophy size={14} className="text-amber-400" />Ranked #{myRank} in Hyderabad</div>
+                    <div className="flex items-center gap-1.5"><Trophy size={14} className="text-amber-400 shrink-0" />Ranked #{myRank}</div>
                   )}
                 </div>
               </div>
             </div>
-            <Link href="/leaderboard" className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-bold rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all text-xs no-underline self-start md:self-auto">
-              View Leaderboard <ArrowUpRight size={16} />
+            <Link href="/leaderboard" className="flex items-center justify-center gap-2 p-2.5 lg:px-6 lg:py-3 bg-green-600 text-white font-bold rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all text-xs no-underline self-start md:self-auto shrink-0" title="View Leaderboard">
+              <Trophy size={16} />
+              <span className="hidden lg:inline">View Leaderboard</span>
+              <ArrowUpRight size={16} className="hidden lg:block" />
             </Link>
           </div>
         </div>
 
-        <div className="p-8 -mt-6 relative z-30">
-          {/* Bento Stats */}
+        <div className="p-4 lg:p-8 -mt-4 lg:-mt-6 relative z-30 max-w-full overflow-x-hidden">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-10">
             <div className="md:col-span-2 bg-white p-6 rounded-3xl border border-gray-100 shadow-xl flex items-center justify-between overflow-hidden relative group">
               <div className="absolute -right-8 -bottom-8 opacity-[0.04] group-hover:scale-110 transition-transform duration-700 pointer-events-none"><Activity size={140} /></div>
@@ -167,11 +167,8 @@ export default async function MlaProfilePage({ params }: { params: Promise<{ slu
             </div>
           </div>
 
-          {/* Main grid */}
           <div className="space-y-10">
-            {/* Top row: Recent Issues and Issue Distribution */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Recent Issues */}
               <div className="lg:col-span-2 space-y-5">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2.5">
@@ -221,7 +218,6 @@ export default async function MlaProfilePage({ params }: { params: Promise<{ slu
                 </div>
               </div>
 
-              {/* Sidebar items */}
               <div className="space-y-6">
                 <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-lg">
                   <h3 className="text-base font-bold text-gray-900 mb-6 flex items-center gap-2">
@@ -267,7 +263,6 @@ export default async function MlaProfilePage({ params }: { params: Promise<{ slu
               </div>
             </div>
 
-            {/* Bottom Row: Full width Map and Charts */}
             <div className="w-full">
               <MlaProfileClient byCategory={byCategory} statusBreakdown={statusBreakdown} mapReports={mapReports} />
             </div>

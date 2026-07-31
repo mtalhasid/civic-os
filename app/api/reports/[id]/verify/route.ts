@@ -15,7 +15,7 @@ export async function POST(
   const user = session.user as any;
   const { id } = await params;
   const body = await req.json();
-  const { verified } = body; // true = Confirmed Fixed, false = Still Broken
+  const { verified } = body; 
 
   if (typeof verified !== "boolean") {
     return NextResponse.json(
@@ -24,13 +24,13 @@ export async function POST(
     );
   }
 
-  // Get the issue
+  
   const issue = await prisma.report.findUnique({ where: { id } });
   if (!issue) {
     return NextResponse.json({ error: "Issue not found" }, { status: 404 });
   }
 
-  // Only the citizen who reported can verify
+  
   if (issue.createdById !== user.id) {
     return NextResponse.json(
       { error: "Only the citizen who reported this issue can verify the fix" },
@@ -38,7 +38,7 @@ export async function POST(
     );
   }
 
-  // Can only verify when status is RESOLVED_PENDING_VERIFICATION
+  
   if (issue.status !== "RESOLVED_PENDING_VERIFICATION") {
     return NextResponse.json(
       { error: "Issue is not pending verification" },

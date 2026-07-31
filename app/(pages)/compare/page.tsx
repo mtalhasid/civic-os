@@ -60,23 +60,22 @@ export default async function ComparePage({
     <PageShell>
       
 
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Ward Comparison</h1>
+      <div className="p-4 lg:p-8 max-w-full overflow-x-hidden">
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Ward Comparison</h1>
           <p className="text-gray-500 text-sm font-medium">Compare two wards side by side — civic performance, resolution rates, and live issue maps.</p>
         </div>
 
-        {/* Selector */}
-        <form action="/compare" method="get" className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xl mb-10">
+        <form action="/compare" method="get" className="bg-white border border-gray-100 rounded-3xl p-4 lg:p-6 shadow-xl mb-8 lg:mb-10">
           <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-4">Select Wards to Compare</p>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center">
             <div className="flex-1 min-w-[180px]">
               <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest block mb-1.5">Ward 1</label>
               <select name="ward1" defaultValue={area1} className="w-full h-10 px-3 bg-green-50 border border-green-100 focus:border-green-400 text-xs font-bold text-gray-900 rounded-xl outline-none cursor-pointer">
                 {uniqueAreas.map((a) => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>
-            <div className="flex items-end pb-0.5">
+            <div className="flex items-center justify-center lg:items-end lg:pb-0.5">
               <div className="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center">
                 <ArrowLeftRight size={18} />
               </div>
@@ -87,15 +86,15 @@ export default async function ComparePage({
                 {uniqueAreas.map((a) => <option key={a} value={a}>{a}</option>)}
               </select>
             </div>
-            <div className="flex items-end pb-0">
-              <button type="submit" className="h-10 px-6 bg-green-600 text-white font-bold text-xs rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+            <div className="flex items-stretch lg:items-end lg:pb-0">
+              <button type="submit" className="w-full lg:w-auto h-10 px-6 bg-green-600 text-white font-bold text-xs rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">
+                <GitCompare size={16} className="lg:hidden" />
                 Compare
               </button>
             </div>
           </div>
         </form>
 
-        {/* Side-by-side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {([
             { area: area1, mlaData: mla1Data, mla: mla1, mapReports: mapReports1, side: 1 },
@@ -120,17 +119,17 @@ export default async function ComparePage({
                     <p className="text-xs text-white/60 font-medium">MLA: <span className="text-white font-bold">{mlaData?.mla_name ?? "—"}</span></p>
                   </div>
                 </div>
-                <div className="p-6">
-                  <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="p-4 lg:p-6">
+                  <div className="grid grid-cols-3 gap-2 lg:gap-3 mb-6">
                     {[
                       { label: "Total Issues", value: mla?.totalIssues ?? 0, icon: AlertTriangle },
                       { label: "Resolved %", value: mla ? `${mla.resolutionRate.toFixed(0)}%` : "—", icon: CheckCircle2 },
                       { label: "Avg Days", value: mla?.avgResolutionDays != null ? `${mla.avgResolutionDays.toFixed(1)}d` : "—", icon: Clock },
                     ].map(({ label, value, icon: Icon }) => (
-                      <div key={label} className={`p-4 rounded-xl border ${accent} text-center`}>
-                        <Icon size={14} className="mx-auto mb-1.5 opacity-60" />
-                        <div className="text-lg font-bold mb-0.5">{value}</div>
-                        <div className="text-[9px] font-bold opacity-60 uppercase tracking-widest leading-tight">{label}</div>
+                      <div key={label} className={`p-3 lg:p-4 rounded-xl border ${accent} text-center`}>
+                        <Icon size={14} className="mx-auto mb-1 lg:mb-1.5 opacity-60" />
+                        <div className="text-base lg:text-lg font-bold mb-0.5">{value}</div>
+                        <div className="text-[8px] lg:text-[9px] font-bold opacity-60 uppercase tracking-widest leading-tight">{label}</div>
                       </div>
                     ))}
                   </div>

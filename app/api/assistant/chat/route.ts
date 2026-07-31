@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 
     const context = await gatherContext(query);
 
-    // Using the verified key from extension if env is missing
+    
     const apiKey = process.env.GEMINI_API_KEY || "";
     if (!apiKey || apiKey === "AIzaSyDmIO2A2SrMJaM6YhV1BvoyzjIbjbpMfqE_DUMMY") {
       return NextResponse.json({

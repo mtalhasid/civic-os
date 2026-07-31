@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-import { PROTECTED_ROUTES } from "@/lib/protectedRoutes";
+import { isProtectedRoute } from "@/lib/protectedRoutes";
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const needsAuth = PROTECTED_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-  if (!needsAuth) return NextResponse.next();
+  if (!isProtectedRoute(pathname)) return NextResponse.next();
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   if (token) return NextResponse.next();
@@ -20,5 +19,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/dashboard/:path*", "/reports/new/:path*", "/notifications/:path*", "/profile/:path*"],
 };

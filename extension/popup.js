@@ -14,13 +14,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     console.log("[DEBUG] 2. Got tab:", tab.url);
 
-    // INJECT content script first
+    
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ["content.js"],
     });
 
-    // Small delay to let it initialize
+    
     setTimeout(() => {
       chrome.tabs.sendMessage(
         tab.id,
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     showEmptyState();
   }
 
-  // Button event listeners (keep these)
+  
   document.getElementById("verifyClaim").addEventListener("click", verifyClaim);
   document
     .getElementById("checkDetails")
@@ -137,7 +137,7 @@ function displayAnalysis(analysis, content) {
   document.getElementById("emptyState").classList.add("hidden");
   document.getElementById("analysisState").classList.remove("hidden");
 
-  // Update stats
+  
   document.getElementById("locationText").textContent =
     analysis.location || "Not detected";
   document.getElementById("issueTypeText").textContent =
@@ -145,22 +145,21 @@ function displayAnalysis(analysis, content) {
   document.getElementById("severityText").textContent =
     analysis.severity || "-";
 
-  // Update confidence
+  
   const confidence = analysis.confidence || 0;
   document.getElementById("confidenceText").textContent = confidence + "%";
   document.getElementById("confidenceFill").style.width = confidence + "%";
 
-  // Apply severity styling
+  
   const severityEl = document.getElementById("severityText");
   severityEl.className =
     "severity-badge " + getSeverityClass(analysis.severity);
 
-  // Update content preview
+  
   const preview = content.text.substring(0, 180);
   document.getElementById("contentPreview").textContent =
     preview + (preview.length >= 180 ? "..." : "");
 
-  // Load map
   if (analysis.location) {
     loadMiniMap(analysis.location);
   }
@@ -208,7 +207,7 @@ async function loadMiniMap(location) {
 
       console.log("[v0] Coordinates:", lat, lon);
 
-      // Calculate bounding box
+      
       const delta = 0.02;
       const bbox = `${lon - delta},${lat - delta},${lon + delta},${
         lat + delta
@@ -216,14 +215,14 @@ async function loadMiniMap(location) {
 
       console.log("[v0] BBox:", bbox);
 
-      // Hide placeholder
+      
       mapPlaceholder.style.display = "none";
 
-      // Build embed URL
+      
       const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
       console.log("[v0] Map URL:", embedUrl);
 
-      // Show map container and add iframe
+      
       mapContainer.style.display = "block";
       mapContainer.innerHTML = `
         <iframe 
@@ -402,7 +401,7 @@ function saveToHistory(analysis, content) {
         lastUpdated: null,
       };
 
-      // Create history entry with metadata
+      
       const historyEntry = {
         ...analysis,
         timestamp: new Date().toISOString(),
@@ -413,10 +412,10 @@ function saveToHistory(analysis, content) {
         tags: extractTags(analysis),
       };
 
-      // Add to history
+      
       history.unshift(historyEntry);
 
-      // Update statistics
+      
       stats.totalVerifications++;
       stats.issueTypes[analysis.issueType] =
         (stats.issueTypes[analysis.issueType] || 0) + 1;
@@ -426,7 +425,7 @@ function saveToHistory(analysis, content) {
         (stats.locationFrequency[analysis.location] || 0) + 1;
       stats.lastUpdated = new Date().toISOString();
 
-      // Maintain size limit
+      
       if (history.length > 50) {
         history.pop();
       }
@@ -441,12 +440,12 @@ function saveToHistory(analysis, content) {
   );
 }
 
-// Utility function to generate unique history IDs
+
 function generateHistoryId() {
   return "hist_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
 }
 
-// Tag extraction for better categorization
+
 function extractTags(analysis) {
   const tags = [];
 
@@ -476,7 +475,7 @@ function showHistory() {
         historyList.innerHTML =
           '<p class="no-data">No verification history yet. Start verifying civic content!</p>';
       } else {
-        // Create history UI with stats summary
+        
         let html = `
         <div class="history-stats-summary">
           <div class="stat-pill">Total: ${stats.totalVerifications || 0}</div>
@@ -520,7 +519,7 @@ function showHistory() {
         html += "</div>";
         historyList.innerHTML = html;
 
-        // Add event listeners for history item interactions
+        
         document.querySelectorAll(".history-item").forEach((item) => {
           item.addEventListener("click", () => {
             const id = item.getAttribute("data-id");
@@ -534,7 +533,7 @@ function showHistory() {
   );
 }
 
-// Function to load and display history item details
+
 function loadHistoryDetails(id, history) {
   const item = history.find((h) => h.id === id);
   if (!item) return;
@@ -613,7 +612,7 @@ function loadHistoryDetails(id, history) {
   document.getElementById("detailsModal").classList.remove("hidden");
 }
 
-// Function to resubmit historical reports
+
 function resubmitHistoryItem(id) {
   console.log("[v0] Resubmitting history item:", id);
 

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🚀 Adding ONLY the demo report (keeping existing data!)...\n");
 
-  // 1. Find existing citizen/authority users (or create if missing)
+  
   let citizen = await prisma.user.findFirst({
     where: { email: "ahmed.khan@gmail.com" },
   });
@@ -13,7 +13,7 @@ async function main() {
     where: { email: "authority@ghmc.gov.in" },
   });
 
-  // If users don't exist (unlikely, but just in case), create them quickly
+  
   if (!citizen) {
     const bcrypt = require("bcrypt") as typeof import("bcrypt");
     const hashedPw = await bcrypt.hash("CivicOS_Demo_2026!", 10);
@@ -43,7 +43,7 @@ async function main() {
     console.log("✅ Created authority user");
   }
 
-  // 2. Find existing MLA (Arekapudi Gandhi) or create if missing
+  
   let mla = await prisma.mla.findFirst({
     where: { name: "Arekapudi Gandhi" },
   });
@@ -59,7 +59,7 @@ async function main() {
     console.log("✅ Created MLA");
   }
 
-  // 3. Create the demo report (set to NOW so it shows first in feed!)
+  
   const demoCreatedAt = new Date();
   const report = await prisma.report.create({
     data: {
@@ -93,7 +93,7 @@ async function main() {
   });
   console.log("✅ Created demo report");
 
-  // Create the full timeline
+  
   const t1 = demoCreatedAt;
   const t2 = new Date(t1.getTime() + 1 * 24 * 60 * 60 * 1000);
   const t3 = new Date(t1.getTime() + 3 * 24 * 60 * 60 * 1000);

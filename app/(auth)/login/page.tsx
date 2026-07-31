@@ -21,7 +21,7 @@ export default function LoginPage() {
     const url = new URL(window.location.href);
     setCallbackUrl(url.searchParams.get("callbackUrl") ?? "/dashboard");
 
-    // Fetch MLAs for dropdown
+    
     fetch("/api/mlas")
       .then((res) => res.json())
       .then((data) => setMlas(data))
@@ -33,13 +33,13 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
 
-    // We use a special "MLA" email format that the system will recognize as an MLA login
+    
     const mlaEmail = `mla.${selectedMlaName.toLowerCase().replace(/\s+/g, ".")}@civicos.demo`;
 
     const res = await signIn("credentials", {
       redirect: false,
       email: mlaEmail,
-      password: "CivicOS_Demo_2026!", // Updated secure password
+      password: "CivicOS_Demo_2026!", 
       callbackUrl,
     });
 

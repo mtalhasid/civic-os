@@ -33,9 +33,9 @@ import {
 } from "lucide-react";
 import SingleMapClient from "@/app/_components/maps/SingleMapClient";
 
-// ─────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────
+
+
+
 type TimelineEntry = {
   id: string;
   actorId: string | null;
@@ -72,6 +72,7 @@ type Report = {
   latitude: number | null;
   longitude: number | null;
   createdById: string;
+  reporterName?: string | null;
   citizenPhotoUrl: string | null;
   fixPhotoUrl: string | null;
   rejectionReason: string | null;
@@ -86,9 +87,9 @@ type Report = {
   createdBy: { id: string; name: string; role: string };
 };
 
-// ─────────────────────────────────────────────────────────────
-// Config
-// ─────────────────────────────────────────────────────────────
+
+
+
 const STATUS_CONFIG: Record<string, { label: string; class: string }> = {
   REPORTED: { label: "Reported", class: "status-reported" },
   ASSIGNED: { label: "Assigned", class: "status-assigned" },
@@ -120,9 +121,9 @@ const STATUS_OPTIONS_FOR_AUTHORITY: Record<string, { value: string; label: strin
   ],
 };
 
-// ─────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────
+
+
+
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("en-IN", {
     day: "numeric", month: "short", year: "numeric",
@@ -148,9 +149,9 @@ function getTimelineColors(role: string) {
   return { dot: "bg-green-600", badge: "text-green-600 border-green-200" };
 }
 
-// ─────────────────────────────────────────────────────────────
-// Main Component
-// ─────────────────────────────────────────────────────────────
+
+
+
 export default function IssueDetailClient({
   initialReport,
   initialUserUpvoted,
@@ -166,7 +167,6 @@ export default function IssueDetailClient({
   const [upvoteCount, setUpvoteCount] = useState(initialReport.upvoteCount);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Authority action state
   const [selectedStatus, setSelectedStatus] = useState("");
   const [actionNote, setActionNote] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
@@ -175,12 +175,10 @@ export default function IssueDetailClient({
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
-  // Comment state
   const [commentText, setCommentText] = useState("");
   const [commentLoading, setCommentLoading] = useState(false);
   const [comments, setComments] = useState<Comment[]>(initialReport.comments);
 
-  // Verification
   const [verifyLoading, setVerifyLoading] = useState(false);
 
   useEffect(() => {
@@ -288,7 +286,7 @@ export default function IssueDetailClient({
     }
   }
 
-  // Derived values
+  
   const mainImage = report.images.find((x) => x.isMain);
   const bodyImages = report.images.filter((x) => !x.isMain);
   const mainSrc = mainImage ? mainImage.url : null;
@@ -299,13 +297,13 @@ export default function IssueDetailClient({
   const availableTransitions = STATUS_OPTIONS_FOR_AUTHORITY[report.status] ?? [];
   const daysOpen = daysSince(report.createdAt);
   const isEscalated = report.escalated || (daysOpen >= 30 && !["CONFIRMED_FIXED", "REJECTED"].includes(report.status));
+  const reporterDisplayName = report.reporterName?.trim() || report.createdBy.name;
 
-  // ─────────────────────────────────────────────────────────────
-  // Render — new 2-column layout
-  // ─────────────────────────────────────────────────────────────
+  
+  
+  
   return (
     <div className="bg-slate-50 min-h-screen">
-      {/* Full Image Modal */}
       {selectedImage && (
         <div 
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
@@ -326,11 +324,10 @@ export default function IssueDetailClient({
         </div>
       )}
 
-      {/* ── Top header bar ── */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4 min-w-0 flex-1">
-            <div className="min-w-0">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3 lg:py-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-3 min-w-0 flex-1">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                   {report.id.slice(0, 8).toUpperCase()}
@@ -348,14 +345,13 @@ export default function IssueDetailClient({
                   </>
                 )}
               </div>
-              <h1 className="text-base font-bold text-slate-900 leading-tight truncate max-w-lg">
+              <h1 className="text-sm lg:text-base font-bold text-slate-900 leading-tight line-clamp-2 lg:truncate lg:max-w-lg">
                 {report.title}
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
-            {/* Upvote */}
+          <div className="flex items-center gap-2 lg:gap-3 flex-shrink-0 flex-wrap">
             <button
               onClick={handleUpvote}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-sm font-bold transition-all ${
@@ -368,13 +364,11 @@ export default function IssueDetailClient({
               {upvoteCount}
             </button>
 
-            {/* Status */}
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider border ${statusConfig.class}`}>
               <Clock size={11} />
               {statusConfig.label}
             </div>
 
-            {/* Escalated badge */}
             {isEscalated && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-100 text-red-700 rounded-xl text-[10px] font-bold uppercase tracking-wider border border-red-200">
                 <AlertCircle size={11} /> Escalated · {daysOpen}d
@@ -384,14 +378,11 @@ export default function IssueDetailClient({
         </div>
       </header>
 
-      {/* ── Main 2-col grid ── */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 overflow-x-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* ═══ LEFT COL (2/3): Image + Testimony + Audit Trail ═══ */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* Main Before Image */}
             {mainSrc && (
               <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                 <div 
@@ -421,10 +412,10 @@ export default function IssueDetailClient({
                 <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-sm">
-                      {report.createdBy.name.charAt(0)}
+                      {reporterDisplayName.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-900">{report.createdBy.name}</p>
+                      <p className="text-xs font-bold text-slate-900">{reporterDisplayName}</p>
                       <p className="text-[10px] text-slate-500">{formatDate(report.createdAt)}</p>
                     </div>
                   </div>
@@ -432,7 +423,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* All Photos Grid */}
             {report.images.length > 0 && (
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -452,7 +442,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* Fix Photo (After) */}
             {report.fixPhotoUrl && (
               <div className="bg-white border border-green-200 rounded-2xl overflow-hidden shadow-sm">
                 <div className="px-5 py-3 bg-green-50 border-b border-green-100 flex items-center gap-2">
@@ -468,7 +457,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* Rejection reason */}
             {report.status === "REJECTED" && report.rejectionReason && (
               <div className="bg-red-50 border border-red-200 rounded-2xl p-5">
                 <p className="text-xs font-bold text-red-600 mb-1">Rejection Reason (Public)</p>
@@ -476,7 +464,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* Citizen Testimony */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
               <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <MessageCircle size={14} /> Citizen Testimony
@@ -486,7 +473,6 @@ export default function IssueDetailClient({
               </p>
             </div>
 
-            {/* Citizen Verification Panel */}
             {isPendingVerification && isReporter && (
               <div className="bg-purple-50 border border-purple-200 rounded-2xl p-6 shadow-sm">
                 <h2 className="text-base font-bold text-purple-900 mb-2">
@@ -514,7 +500,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* Audit Trail */}
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -551,7 +536,6 @@ export default function IssueDetailClient({
                           <p className={`text-xs leading-relaxed ${isLatest ? "text-slate-900 font-medium" : "text-slate-500"}`}>
                             {entry.note || entry.action.replace(/_/g, " ")}
                           </p>
-                          {/* In-progress photo */}
                           {entry.action === "STATUS_CHANGED" && entry.note?.includes("Repair work in progress") && (
                             <div className="mt-3 rounded-lg overflow-hidden border border-blue-100 shadow-sm max-w-sm cursor-pointer" onClick={() => setSelectedImage("/reports/under_working_in_progress.png")}>
                               <img src="/reports/under_working_in_progress.png" alt="Work in progress" className="w-full h-32 object-cover" />
@@ -561,7 +545,6 @@ export default function IssueDetailClient({
                             </div>
                           )}
 
-                          {/* After/fix photo */}
                           {((entry.action === "CITIZEN_VERIFIED" && report.citizenVerified) || (entry.action === "FIX_PHOTO_UPLOADED" && report.fixPhotoUrl)) && (
                             <div className="mt-3 rounded-lg overflow-hidden border border-green-100 shadow-sm max-w-sm cursor-pointer" onClick={() => setSelectedImage(report.fixPhotoUrl || "")}>
                               <img src={report.fixPhotoUrl || ""} alt="Fix confirmation" className="w-full h-32 object-cover" />
@@ -579,10 +562,8 @@ export default function IssueDetailClient({
             </div>
           </div>
 
-          {/* ═══ RIGHT COL (1/3): Map + Authority + Actions + Comments ═══ */}
           <div className="space-y-5">
 
-            {/* Location Map */}
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
               <div className="h-44 bg-slate-100 relative">
                 {(report.latitude && report.longitude) ? (
@@ -622,7 +603,6 @@ export default function IssueDetailClient({
               </div>
             </div>
 
-            {/* Assigned Authority */}
             {report.mlaName && (
               <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">
@@ -640,7 +620,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* Authority Action Panel */}
             {isAuthority && availableTransitions.length > 0 && (
               <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
@@ -709,7 +688,6 @@ export default function IssueDetailClient({
               </div>
             )}
 
-            {/* Actions */}
             <div className="bg-slate-900 rounded-2xl p-5 text-white shadow-lg">
               <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4">Actions</h3>
               <div className="space-y-2">
@@ -725,7 +703,6 @@ export default function IssueDetailClient({
               </div>
             </div>
 
-            {/* Comments */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">

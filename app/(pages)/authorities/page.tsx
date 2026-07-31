@@ -46,16 +46,12 @@ export default async function AuthoritiesPage({
 
   return (
     <PageShell>
-      {/* Header */}
-
-
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Authorities & MLAs</h1>
+      <div className="p-4 lg:p-8 max-w-full overflow-x-hidden">
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight mb-1.5">Authorities & MLAs</h1>
           <p className="text-gray-500 text-sm font-medium">Track municipal bodies and elected representative performance.</p>
         </div>
 
-        {/* Municipal Bodies */}
         <div className="mb-12">
           <div className="flex items-center gap-2.5 mb-6">
             <div className="w-9 h-9 bg-gray-900 text-white rounded-xl flex items-center justify-center">
@@ -86,10 +82,9 @@ export default async function AuthoritiesPage({
           </div>
         </div>
 
-        {/* Tracked MLAs */}
         <div>
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2.5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6">
+            <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-9 h-9 bg-green-600 text-white rounded-xl flex items-center justify-center">
                 <Trophy size={18} />
               </div>
@@ -98,12 +93,12 @@ export default async function AuthoritiesPage({
                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{sorted.length} representatives found</p>
               </div>
             </div>
-            <form action="/authorities" method="get" className="relative">
+            <form action="/authorities" method="get" className="relative w-full lg:w-auto">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
               <input
                 type="search" name="q" defaultValue={q}
                 placeholder="Search by name or ward..."
-                className="pl-10 pr-4 py-2 bg-green-50 border border-green-100 focus:border-green-300 rounded-xl text-xs font-medium outline-none transition-all w-64"
+                className="w-full lg:w-64 pl-10 pr-4 py-2 bg-green-50 border border-green-100 focus:border-green-300 rounded-xl text-xs font-medium outline-none transition-all"
               />
             </form>
           </div>

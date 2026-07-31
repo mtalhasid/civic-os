@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const distKm = (totalDistance / 1000).toFixed(1);
     const durationMin = Math.round(totalDuration / 60);
 
-    // Fallback summary (if no API key or call fails)
+    
     const fallback =
       flaggedComplaints.length === 0
         ? `Your route from ${source} to ${destination} (${distKm} km, ~${durationMin} min) looks clear — no open civic issues found along the way. Have a safe journey!`

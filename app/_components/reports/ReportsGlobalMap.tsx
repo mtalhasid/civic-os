@@ -23,7 +23,7 @@ function categoryColor(category: string) {
   if (cat.includes("WATER") || cat.includes("FLOOD")) return "#3b82f6";
   if (cat.includes("LIGHT") || cat.includes("TRAFFIC")) return "#eab308";
   if (cat.includes("ANIMAL") || cat.includes("DOG")) return "#8b5cf6";
-  return "#10b981"; // default green
+  return "#10b981"; 
 }
 
 function getCategoryLabel(category: string) {
@@ -39,7 +39,7 @@ function getCategoryLabel(category: string) {
 }
 
 function createCategoryIcon(category: string, isSelected: boolean) {
-  const bg = isSelected ? "#111827" : categoryColor(category); // dark grey when selected
+  const bg = isSelected ? "#111827" : categoryColor(category); 
   const scale = isSelected ? 1.4 : 1;
   const size = 16;
   const label = getCategoryLabel(category);
@@ -70,7 +70,7 @@ function createCategoryIcon(category: string, isSelected: boolean) {
 function MapInvalidate({ isFullScreen }: { isFullScreen: boolean }) {
   const map = useMap();
   useEffect(() => {
-    // Wait for css transitions
+    
     setTimeout(() => map.invalidateSize(), 150);
     setTimeout(() => map.invalidateSize(), 350);
   }, [isFullScreen, map]);
@@ -121,7 +121,6 @@ export default function ReportsGlobalMap({ reports }: { reports: GlobalMapReport
         isFullScreen ? "h-screen" : "h-full min-h-[400px]"
       }`} 
     >
-      {/* Full Screen Toggle Button */}
       <div className="absolute top-6 right-6 z-[10001]">
         <button
           onClick={toggleFullScreen}
@@ -139,8 +138,7 @@ export default function ReportsGlobalMap({ reports }: { reports: GlobalMapReport
         </button>
       </div>
 
-      {/* Map Legend */}
-      <div className="absolute bottom-6 left-[80px] z-[1000] bg-white/95 backdrop-blur-xl shadow-xl rounded-xl p-3 border border-gray-100 flex flex-col gap-1.5 pointer-events-auto">
+      <div className="absolute bottom-3 lg:bottom-6 left-3 lg:left-[80px] z-[1000] max-w-[calc(100%-1.5rem)] bg-white/95 backdrop-blur-xl shadow-xl rounded-xl p-2.5 lg:p-3 border border-gray-100 flex flex-col gap-1 pointer-events-auto">
         <h4 className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Issue Types</h4>
         {["ROAD", "GARBAGE", "WATER", "LIGHT", "ANIMAL", "OTHER"].map((cat) => (
           <div key={cat} className="flex items-center gap-2">
