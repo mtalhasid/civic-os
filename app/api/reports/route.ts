@@ -126,7 +126,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const mainImage = report.images.find(img => img.isMain);
+  const mainImage = report.images.find((img: (typeof report.images)[number]) => img.isMain);
   const whatsapp = await notifyOnReportCreatedAsync({
     id: report.id,
     title: report.title,
